@@ -1,0 +1,763 @@
+---
+title: "HubSpot API: The Complete Engineering Guide"
+description: "REST vs GraphQL, rate limiting strategies, webhook signatures, and the patterns that separate production-grade integrations from demo-day hacks."
+date: "2024-12-24"
+author: "tolga-oral"
+category: "gtm-engineering"
+tags: ["hubspot", "api-integration", "revops", "automation", "webhooks"]
+featured: true
+---
+
+## The Integration That Breaks at Scale
+
+HubSpot is the CRM of choice for thousands of B2B companies. But the gap between "we connected HubSpot to our app" and "we have a production-grade HubSpot integration" is measured in 3 AM incident pages.
+
+Most HubSpot integrations are built for demos: a few API calls, some basic data syncing, and optimistic assumptions about rate limits. Then volume increases. Then the 429 errors start. Then deals get lost between systems and nobody knows why.
+
+This guide covers what the official documentation glosses over: the architectural decisions, failure modes, and implementation patterns that separate robust integrations from brittle ones.
+
+## Dual-Protocol Architecture: REST vs GraphQL
+
+HubSpot offers two API protocols. Choosing the wrong one for your use case creates technical debt from day one.
+
+### REST API
+
+The REST API is HubSpot's original interface. It excels at write operations and simple CRUD actions.
+
+```typescript
+// REST API: Clean for single-object operations
+const createContact = async (properties: ContactProperties) => {
+  const response = await fetch(
+    "https://api.hubapi.com/crm/v3/objects/contacts",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ properties }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`HubSpot API error: ${response.status}`);
+  }
+
+  return response.json();
+};
+```
+
+**Strengths:**
+- Simpler mental model for CRUD operations
+- Better documentation and community examples
+- Required for write operations (GraphQL is read-only)
+
+**Limitations:**
+- N+1 query problem: fetching a deal with its contacts and company requires 3+ API calls
+- Over-fetching: endpoints return fixed response shapes
+
+### GraphQL API (CRM v3)
+
+GraphQL eliminates the N+1 problem by allowing you to fetch related objects in a single request.
+
+```graphql
+# GraphQL: Fetch deal with all associated objects in one call
+query GetDealWithAssociations($dealId: String!) {
+  CRM {
+    deal(uniquePropertyValue: { propertyName: "hs_object_id", value: $dealId }) {
+      dealname
+      amount
+      dealstage
+      closedate
+      associations {
+        contacts {
+          items {
+            firstname
+            lastname
+            email
+          }
+        }
+        companies {
+          items {
+            name
+            domain
+            industry
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Strengths:**
+- Fetch complex object graphs in a single request
+- Request only the fields you need (no over-fetching)
+- Reduced API call volume = less rate limit pressure
+
+**Limitations:**
+- Read-only: all writes must use REST
+- Steeper learning curve
+- Some endpoints not yet available in GraphQL
+
+### The Hybrid Pattern
+
+Production integrations use both protocols strategically:
+
+```typescript
+// Hybrid architecture pattern
+class HubSpotClient {
+  // GraphQL for complex reads
+  async getDealWithContext(dealId: string): Promise<DealContext> {
+    const query = `
+      query GetDeal($dealId: String!) {
+        CRM {
+          deal(uniquePropertyValue: { propertyName: "hs_object_id", value: $dealId }) {
+            dealname
+            amount
+            associations {
+              contacts { items { email, firstname, lastname } }
+              companies { items { name, domain } }
+            }
+          }
+        }
+      }
+    `;
+    return this.graphqlRequest(query, { dealId });
+  }
+
+  // REST for writes
+  async updateDealStage(dealId: string, stage: string): Promise<void> {
+    await this.restRequest(`/crm/v3/objects/deals/${dealId}`, {
+      method: "PATCH",
+      body: { properties: { dealstage: stage } },
+    });
+  }
+
+  // REST for batch operations
+  async batchCreateContacts(contacts: ContactInput[]): Promise<BatchResult> {
+    return this.restRequest("/crm/v3/objects/contacts/batch/create", {
+      method: "POST",
+      body: { inputs: contacts },
+    });
+  }
+}
+```
+
+**Rule of thumb:** GraphQL for reads with associations, REST for writes and batch operations.
+
+## Authentication: Private Apps vs OAuth 2.0
+
+HubSpot deprecated API keys in November 2022. Two options remain: Private Apps and OAuth 2.0.
+
+### Private Apps
+
+Private Apps are the simpler choice for internal integrations—tools that only access your own HubSpot portal.
+
+```typescript
+// Private App authentication
+const HUBSPOT_ACCESS_TOKEN = process.env.HUBSPOT_PRIVATE_APP_TOKEN;
+
+const hubspotRequest = async (endpoint: string, options: RequestInit = {}) => {
+  const response = await fetch(`https://api.hubapi.com${endpoint}`, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${HUBSPOT_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.json();
+};
+```
+
+**Use Private Apps when:**
+- Building internal tools that access only your HubSpot instance
+- The integration doesn't need to work across multiple HubSpot portals
+- You want simpler token management (no refresh flow)
+
+### OAuth 2.0
+
+OAuth is required when your app needs to access other companies' HubSpot portals—the model for any productized integration.
+
+```typescript
+// OAuth 2.0 token refresh flow
+interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+}
+
+class HubSpotOAuth {
+  private clientId: string;
+  private clientSecret: string;
+  private redirectUri: string;
+
+  async refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
+    const response = await fetch("https://api.hubapi.com/oauth/v1/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+        refresh_token: refreshToken,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Token refresh failed");
+    }
+
+    return response.json();
+  }
+
+  // Proactive refresh before expiration
+  async getValidToken(storedToken: StoredToken): Promise<string> {
+    const expiresAt = storedToken.issuedAt + storedToken.expiresIn * 1000;
+    const bufferMs = 5 * 60 * 1000; // 5-minute buffer
+
+    if (Date.now() > expiresAt - bufferMs) {
+      const newToken = await this.refreshAccessToken(storedToken.refreshToken);
+      await this.storeToken(newToken);
+      return newToken.access_token;
+    }
+
+    return storedToken.accessToken;
+  }
+}
+```
+
+**Use OAuth when:**
+- Building a product that connects to customers' HubSpot instances
+- Your integration is listed in the HubSpot App Marketplace
+- Multiple HubSpot portals need to connect to your system
+
+## Rate Limiting: The Silent Integration Killer
+
+HubSpot enforces two types of rate limits. Ignoring either one causes production failures.
+
+### Burst Limits
+
+Burst limits cap requests over short time windows:
+
+| App Type | Limit |
+|----------|-------|
+| Private Apps | 100 requests per 10 seconds |
+| OAuth Apps (Free/Starter) | 100 requests per 10 seconds |
+| OAuth Apps (Pro/Enterprise) | 150 requests per 10 seconds |
+| OAuth Apps (API Add-on) | 200-250 requests per 10 seconds |
+
+### Daily Limits
+
+Daily limits cap total requests per 24-hour period:
+
+| App Type | Daily Limit |
+|----------|-------------|
+| Private Apps | 250,000 requests |
+| OAuth Apps (Free/Starter) | 250,000 requests |
+| OAuth Apps (Pro/Enterprise) | 500,000 requests |
+| OAuth Apps (API Add-on) | 1,000,000 requests |
+
+### Implementing Resilient Rate Limiting
+
+Naive retry logic causes thundering herd problems. Exponential backoff with jitter spreads retry attempts:
+
+```python
+import time
+import random
+import requests
+from typing import Any, Dict, Optional
+
+class HubSpotClient:
+    def __init__(self, access_token: str):
+        self.access_token = access_token
+        self.base_url = "https://api.hubapi.com"
+        self.max_retries = 5
+        self.base_delay = 1.0  # seconds
+
+    def _request_with_backoff(
+        self,
+        method: str,
+        endpoint: str,
+        data: Optional[Dict] = None
+    ) -> Dict[str, Any]:
+        """
+        Make API request with exponential backoff and jitter.
+        Handles 429 (rate limit) and 5xx (server) errors.
+        """
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "Content-Type": "application/json"
+        }
+
+        for attempt in range(self.max_retries):
+            response = requests.request(
+                method,
+                f"{self.base_url}{endpoint}",
+                headers=headers,
+                json=data
+            )
+
+            # Success
+            if response.status_code < 400:
+                return response.json()
+
+            # Rate limited or server error - retry with backoff
+            if response.status_code in (429, 500, 502, 503, 504):
+                if attempt == self.max_retries - 1:
+                    response.raise_for_status()
+
+                # Exponential backoff with full jitter
+                # Delay = random(0, base * 2^attempt)
+                max_delay = self.base_delay * (2 ** attempt)
+                delay = random.uniform(0, max_delay)
+
+                # Check Retry-After header for 429s
+                retry_after = response.headers.get("Retry-After")
+                if retry_after:
+                    delay = max(delay, float(retry_after))
+
+                print(f"Rate limited. Retrying in {delay:.2f}s (attempt {attempt + 1})")
+                time.sleep(delay)
+                continue
+
+            # Client error - don't retry
+            response.raise_for_status()
+
+        raise Exception("Max retries exceeded")
+
+    def batch_update_contacts(self, contacts: list[Dict]) -> Dict:
+        """
+        Batch update with chunking to stay under limits.
+        HubSpot batch endpoints accept max 100 records per request.
+        """
+        results = {"updated": [], "errors": []}
+        chunk_size = 100
+
+        for i in range(0, len(contacts), chunk_size):
+            chunk = contacts[i:i + chunk_size]
+            try:
+                response = self._request_with_backoff(
+                    "POST",
+                    "/crm/v3/objects/contacts/batch/update",
+                    {"inputs": chunk}
+                )
+                results["updated"].extend(response.get("results", []))
+            except Exception as e:
+                results["errors"].append({
+                    "chunk_start": i,
+                    "error": str(e)
+                })
+
+        return results
+```
+
+### Token Bucket Pattern for Proactive Limiting
+
+Rather than reacting to 429s, proactively limit request rate:
+
+```typescript
+class TokenBucket {
+  private tokens: number;
+  private lastRefill: number;
+  private readonly maxTokens: number;
+  private readonly refillRate: number; // tokens per second
+
+  constructor(maxTokens: number, refillRatePerSecond: number) {
+    this.maxTokens = maxTokens;
+    this.tokens = maxTokens;
+    this.refillRate = refillRatePerSecond;
+    this.lastRefill = Date.now();
+  }
+
+  async acquire(): Promise<void> {
+    this.refill();
+
+    if (this.tokens < 1) {
+      // Calculate wait time for next token
+      const waitMs = (1 / this.refillRate) * 1000;
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+      this.refill();
+    }
+
+    this.tokens -= 1;
+  }
+
+  private refill(): void {
+    const now = Date.now();
+    const elapsed = (now - this.lastRefill) / 1000;
+    const tokensToAdd = elapsed * this.refillRate;
+
+    this.tokens = Math.min(this.maxTokens, this.tokens + tokensToAdd);
+    this.lastRefill = now;
+  }
+}
+
+// Usage: 10 requests per second (100 per 10s burst limit)
+const rateLimiter = new TokenBucket(100, 10);
+
+async function hubspotRequest(endpoint: string): Promise<Response> {
+  await rateLimiter.acquire();
+  return fetch(`https://api.hubapi.com${endpoint}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+```
+
+## The 10,000 Record Search Limit
+
+HubSpot's search API has a hard limit: you cannot paginate beyond 10,000 results. This isn't documented prominently, and it breaks integrations that assume unlimited pagination.
+
+```typescript
+// This will fail silently after 10,000 records
+const searchAllContacts = async (filter: SearchFilter) => {
+  let after = 0;
+  const allResults = [];
+
+  while (true) {
+    const response = await hubspot.crm.contacts.searchApi.doSearch({
+      filterGroups: [filter],
+      limit: 100,
+      after: after,
+    });
+
+    allResults.push(...response.results);
+
+    // This stops working at offset 10,000
+    if (!response.paging?.next?.after) break;
+    after = response.paging.next.after;
+  }
+
+  return allResults; // Max 10,000 records, regardless of actual count
+};
+```
+
+### Workaround: Keyset Pagination with Timestamps
+
+Paginate using timestamp ranges instead of offsets:
+
+```typescript
+interface TimeRange {
+  start: Date;
+  end: Date;
+}
+
+async function searchAllContactsWithKeyset(
+  baseFilter: SearchFilter
+): Promise<Contact[]> {
+  const allResults: Contact[] = [];
+
+  // Start from earliest possible date
+  let currentStart = new Date("2020-01-01");
+  const now = new Date();
+
+  while (currentStart < now) {
+    // Create 1-day time windows
+    const windowEnd = new Date(currentStart);
+    windowEnd.setDate(windowEnd.getDate() + 1);
+
+    const timeFilter = {
+      propertyName: "createdate",
+      operator: "BETWEEN",
+      value: currentStart.getTime().toString(),
+      highValue: windowEnd.getTime().toString(),
+    };
+
+    // Combine with base filter
+    const results = await searchWithPagination({
+      filterGroups: [
+        {
+          filters: [...baseFilter.filters, timeFilter],
+        },
+      ],
+    });
+
+    allResults.push(...results);
+
+    // If we hit 10K in this window, narrow the window
+    if (results.length >= 10000) {
+      console.warn(`Hit 10K limit for ${currentStart.toISOString()}, narrowing window`);
+      // Implement recursive window narrowing here
+    }
+
+    currentStart = windowEnd;
+  }
+
+  return allResults;
+}
+```
+
+### Alternative: Use the List API
+
+For full exports, skip search entirely and use the list API with cursor-based pagination:
+
+```typescript
+// List API has no 10K limit
+async function listAllContacts(): Promise<Contact[]> {
+  const allContacts: Contact[] = [];
+  let after: string | undefined;
+
+  do {
+    const response = await hubspot.crm.contacts.basicApi.getPage(
+      100, // limit
+      after,
+      ["email", "firstname", "lastname", "createdate"]
+    );
+
+    allContacts.push(...response.results);
+    after = response.paging?.next?.after;
+  } while (after);
+
+  return allContacts;
+}
+```
+
+## Webhook Integration: Events Without Polling
+
+Webhooks eliminate the need to poll for changes. HubSpot sends events to your endpoint when objects change.
+
+### Webhook V3 Signature Validation
+
+HubSpot signs webhook payloads with HMAC SHA-256. Validating signatures prevents spoofed requests:
+
+```typescript
+import crypto from "crypto";
+import express from "express";
+
+const HUBSPOT_CLIENT_SECRET = process.env.HUBSPOT_CLIENT_SECRET!;
+
+function validateWebhookSignature(
+  requestBody: string,
+  signature: string,
+  timestamp: string,
+  method: string,
+  uri: string
+): boolean {
+  // V3 signature: HMAC SHA-256 of method + uri + body + timestamp
+  const sourceString = `${method}${uri}${requestBody}${timestamp}`;
+
+  const expectedSignature = crypto
+    .createHmac("sha256", HUBSPOT_CLIENT_SECRET)
+    .update(sourceString)
+    .digest("hex");
+
+  // Timing-safe comparison prevents timing attacks
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+
+// Reject requests older than 5 minutes (replay attack prevention)
+function isTimestampValid(timestamp: string): boolean {
+  const requestTime = parseInt(timestamp, 10);
+  const now = Date.now();
+  const fiveMinutesMs = 5 * 60 * 1000;
+
+  return now - requestTime < fiveMinutesMs;
+}
+
+const app = express();
+
+// Raw body parser for signature validation
+app.use("/webhooks/hubspot", express.raw({ type: "application/json" }));
+
+app.post("/webhooks/hubspot", (req, res) => {
+  const signature = req.headers["x-hubspot-signature-v3"] as string;
+  const timestamp = req.headers["x-hubspot-request-timestamp"] as string;
+  const body = req.body.toString();
+
+  if (!isTimestampValid(timestamp)) {
+    console.warn("Webhook rejected: timestamp too old");
+    return res.status(401).send("Timestamp expired");
+  }
+
+  const isValid = validateWebhookSignature(
+    body,
+    signature,
+    timestamp,
+    req.method,
+    `https://${req.headers.host}${req.originalUrl}`
+  );
+
+  if (!isValid) {
+    console.warn("Webhook rejected: invalid signature");
+    return res.status(401).send("Invalid signature");
+  }
+
+  // Process the webhook
+  const events = JSON.parse(body);
+  processWebhookEvents(events);
+
+  res.status(200).send("OK");
+});
+```
+
+### Idempotency: Handling Duplicate Webhooks
+
+HubSpot may send the same webhook multiple times. Your handler must be idempotent:
+
+```typescript
+import { Redis } from "ioredis";
+
+const redis = new Redis(process.env.REDIS_URL);
+
+interface WebhookEvent {
+  eventId: string; // HubSpot's unique event ID
+  subscriptionType: string;
+  objectId: number;
+  propertyName?: string;
+  propertyValue?: string;
+}
+
+async function processWebhookEvents(events: WebhookEvent[]): Promise<void> {
+  for (const event of events) {
+    // Check if we've already processed this event
+    const processed = await redis.get(`webhook:${event.eventId}`);
+
+    if (processed) {
+      console.log(`Skipping duplicate event: ${event.eventId}`);
+      continue;
+    }
+
+    // Process the event
+    await handleEvent(event);
+
+    // Mark as processed with 24-hour TTL
+    await redis.set(`webhook:${event.eventId}`, "1", "EX", 86400);
+  }
+}
+```
+
+### The Hybrid Pattern: Webhooks + Polling Safety Net
+
+Webhooks can fail silently—your endpoint was down, HubSpot had an outage, the event was lost in transit. A polling safety net catches missed events:
+
+```typescript
+// Run every 15 minutes as a safety net
+async function reconciliationJob(): Promise<void> {
+  const fifteenMinutesAgo = Date.now() - 15 * 60 * 1000;
+
+  // Fetch recently modified contacts from HubSpot
+  const recentlyModified = await hubspot.crm.contacts.searchApi.doSearch({
+    filterGroups: [
+      {
+        filters: [
+          {
+            propertyName: "lastmodifieddate",
+            operator: "GTE",
+            value: fifteenMinutesAgo.toString(),
+          },
+        ],
+      },
+    ],
+    sorts: [{ propertyName: "lastmodifieddate", direction: "DESCENDING" }],
+    limit: 100,
+  });
+
+  for (const contact of recentlyModified.results) {
+    // Check if we have this version in our system
+    const lastSyncedAt = await getLastSyncTimestamp(contact.id);
+
+    if (!lastSyncedAt || lastSyncedAt < contact.properties.lastmodifieddate) {
+      console.log(`Reconciliation: syncing missed update for ${contact.id}`);
+      await syncContact(contact);
+    }
+  }
+}
+```
+
+## Associations v4: Linking Objects Correctly
+
+HubSpot's data model relies heavily on associations between objects. The v4 Associations API adds support for labeled associations—distinguishing between a "Primary Contact" and a "Billing Contact" on a deal.
+
+```typescript
+// Create association with label
+const createLabeledAssociation = async (
+  dealId: string,
+  contactId: string,
+  label: "Primary" | "Billing" | "Technical"
+) => {
+  // Association type IDs for deal-to-contact
+  const associationTypeId = {
+    Primary: 3, // Primary contact
+    Billing: 279, // Custom label
+    Technical: 280, // Custom label
+  };
+
+  await hubspot.crm.associations.v4.basicApi.create(
+    "deals",
+    dealId,
+    "contacts",
+    contactId,
+    [
+      {
+        associationCategory: "HUBSPOT_DEFINED",
+        associationTypeId: associationTypeId[label],
+      },
+    ]
+  );
+};
+
+// Fetch associations with labels
+const getDealContacts = async (dealId: string) => {
+  const associations = await hubspot.crm.associations.v4.basicApi.getPage(
+    "deals",
+    dealId,
+    "contacts"
+  );
+
+  return associations.results.map((assoc) => ({
+    contactId: assoc.toObjectId,
+    labels: assoc.associationTypes.map((t) => t.label),
+  }));
+};
+```
+
+## Batch Operations: Upsert for Idempotency
+
+Individual creates and updates are non-idempotent—retry a create and you get duplicates. Batch upsert operations are idempotent by design:
+
+```typescript
+// Non-idempotent: Retry creates duplicates
+const createContact = async (email: string) => {
+  // If this fails and you retry, you might create duplicates
+  return hubspot.crm.contacts.basicApi.create({
+    properties: { email },
+  });
+};
+
+// Idempotent: Safe to retry
+const upsertContacts = async (contacts: ContactInput[]) => {
+  // Uses email as the unique identifier
+  // If contact exists, updates. If not, creates.
+  return hubspot.crm.contacts.batchApi.upsert({
+    inputs: contacts.map((c) => ({
+      idProperty: "email",
+      id: c.email,
+      properties: c,
+    })),
+  });
+};
+```
+
+The upsert pattern is essential for reliable syncs. When syncing data from an external system, always use upsert to handle both new records and updates in a single, retryable operation.
+
+## Deployment Checklist
+
+Before going to production:
+
+- [ ] **Protocol selection:** Using GraphQL for reads with associations, REST for writes
+- [ ] **Authentication:** Private App for internal tools, OAuth for multi-tenant apps
+- [ ] **Rate limiting:** Exponential backoff with jitter implemented; token bucket for proactive limiting
+- [ ] **10K search limit:** Using keyset pagination or list API for large exports
+- [ ] **Webhook security:** V3 signature validation with timestamp checking
+- [ ] **Idempotency:** Event deduplication for webhooks; batch upsert for syncs
+- [ ] **Reconciliation:** Polling safety net to catch missed webhook events
+- [ ] **Monitoring:** Alerts on 429 rates, webhook failures, and sync drift
+
+---
+
+We build production HubSpot integrations as part of our [Autonomous Ops](/services#autonomous-ops) track—handling the rate limiting, webhook reliability, and data synchronization that separates demo-day integrations from systems that run without intervention at scale.

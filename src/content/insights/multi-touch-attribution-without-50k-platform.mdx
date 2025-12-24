@@ -1,0 +1,647 @@
+---
+title: "Multi-Touch Attribution Without a $50K Platform"
+description: "Enterprise attribution tools cost $30-60K/year. Here's how to build warehouse-native MTA for under $500/month using dbt, Snowflake, and first-party tracking."
+date: "2024-12-23"
+author: "tolga-oral"
+category: "gtm-engineering"
+tags: ["attribution", "revops", "dbt", "analytics", "marketing-ops"]
+featured: true
+---
+
+## The $60,000 Question
+
+Enterprise attribution platforms—Bizible (Adobe Marketo Measure), CaliberMind, Attribution.com—charge $30,000 to $60,000 annually. Implementation adds another $10,000-$20,000 in consulting fees. For a mid-market SaaS company, that's a significant portion of the MarTech budget for what amounts to a reporting function.
+
+The alternative isn't going without attribution. It's building warehouse-native multi-touch attribution (MTA) for a fraction of the cost—often under $500/month in infrastructure.
+
+The Modern Data Stack has democratized this. Cloud warehouses (Snowflake, BigQuery), open-source event collectors (RudderStack, Snowplow), and transformation frameworks (dbt) make it possible to build transparent, auditable attribution systems that you own completely.
+
+## Why Enterprise Platforms Fall Short
+
+### The Black Box Problem
+
+When a Sales VP asks "Why did this webinar get $5,000 in credit?", the answer from Bizible is often "That's what the algorithm decided." You can't see the raw SQL. You can't audit the logic. If the numbers look wrong, stakeholders dismiss the entire system.
+
+This opacity isn't just frustrating—it's corrosive to trust. Marketing can't defend their numbers because they don't understand how they were calculated.
+
+### Rigid Data Models
+
+Enterprise tools enforce specific schemas. Bizible is tightly coupled with Salesforce Campaigns. If your marketing data doesn't fit neatly into that model—product usage data in a PLG motion, community interactions on Discord, podcast appearances—it's difficult or impossible to include.
+
+For B2B SaaS with 6-12 month sales cycles, the touchpoints that matter often aren't the ones enterprise tools were built to track.
+
+### Vendor Lock-In
+
+The transformation logic lives inside the vendor's platform. Cancel the subscription and you lose not just the tool, but the historical intelligence and the logic that processed it. Your data becomes a hostage.
+
+## Attribution Models: A Quick Primer
+
+Before building, you need to understand what you're building. Attribution is an algorithmic interpretation of value—the model you choose shapes marketing behavior.
+
+### Single-Touch Models (Avoid These)
+
+**First-Touch:** 100% credit to the first interaction. Useful for understanding awareness channels, but ignores everything that happened between discovery and purchase. In B2B, the "spark" is rarely the "closer."
+
+**Last-Touch:** 100% credit to the final interaction. The most dangerous model for B2B. The last touch before a deal closes is often a direct search or brand visit—the prospect already decided to buy. This cannibalizes demand generation programs.
+
+### Multi-Touch Models (Use These)
+
+**Linear:** Equal credit to all touchpoints. Conservative baseline for long B2B journeys. Ensures middle-of-funnel content gets recognition. Critique: treats a banner impression the same as a 1-hour webinar attendance.
+
+**U-Shaped (Position-Based):** 40% to first touch, 40% to last touch, 20% distributed across middle touches. The B2B standard. Acknowledges both lead generation and pipeline conversion while recognizing nurture content.
+
+**W-Shaped:** 30% to first touch, 30% to lead creation, 30% to opportunity creation, 10% to middle touches. Best for organizations with distinct MQL stages. Explicitly values the transition from anonymous visitor to known prospect.
+
+```typescript
+// Attribution model weight distribution
+const attributionModels = {
+  linear: (touchCount: number) => 1 / touchCount,
+
+  uShaped: (position: number, total: number) => {
+    if (position === 1) return 0.4; // First touch
+    if (position === total) return 0.4; // Last touch
+    return 0.2 / (total - 2); // Middle touches
+  },
+
+  wShaped: (position: number, total: number, isLeadCreation: boolean, isOppCreation: boolean) => {
+    if (position === 1) return 0.3; // First touch
+    if (isLeadCreation) return 0.3; // Lead creation
+    if (isOppCreation) return 0.3; // Opportunity creation
+    return 0.1 / (total - 3); // Middle touches
+  },
+
+  timeDecay: (daysFromConversion: number, halfLife: number = 7) => {
+    return Math.pow(2, -daysFromConversion / halfLife);
+  },
+};
+```
+
+### Data-Driven Models: A Reality Check
+
+Probabilistic models (Shapley Values, Markov Chains) calculate marginal contribution by comparing converting paths against non-converting paths. Theoretically superior—but they require immense data volumes.
+
+For a B2B SaaS company closing 50 deals per quarter, the dataset is too sparse for reliable convergence. "Data-driven" becomes a black box of noise for companies under $50M ARR.
+
+## The Warehouse-Native Architecture
+
+The DIY approach decouples components, allowing best-of-breed selection and independent scaling.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  WAREHOUSE-NATIVE ATTRIBUTION                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐       │
+│  │  Collection  │    │  Extraction  │    │   Storage    │       │
+│  │  RudderStack │    │   Airbyte    │    │  Snowflake   │       │
+│  │  Snowplow    │    │   Fivetran   │    │  BigQuery    │       │
+│  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘       │
+│         │                   │                   │               │
+│         └───────────────────┴───────────────────┘               │
+│                             │                                   │
+│                             ▼                                   │
+│                    ┌──────────────┐                             │
+│                    │Transformation│                             │
+│                    │     dbt      │                             │
+│                    └──────┬───────┘                             │
+│                           │                                     │
+│                           ▼                                     │
+│                    ┌──────────────┐                             │
+│                    │Visualization │                             │
+│                    │   Metabase   │                             │
+│                    │  Lightdash   │                             │
+│                    └──────────────┘                             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Component Costs
+
+| Component | Tool | Monthly Cost |
+|-----------|------|--------------|
+| Collection | RudderStack | Free (1M events/mo) |
+| Extraction | Airbyte (self-hosted) | ~$50 (EC2) |
+| Storage | Snowflake/BigQuery | $100-300 |
+| Transformation | dbt Core | Free |
+| Visualization | Metabase/Lightdash | Free (self-hosted) |
+| **Total** | | **$150-350/month** |
+
+Compare to $30,000-$60,000/year for enterprise platforms.
+
+## Step 1: Data Collection
+
+The quality of attribution is capped by the quality of input data. You need granular, raw event data—not aggregated metrics.
+
+### First-Party Server-Side Tracking
+
+Modern browsers (Safari ITP, Firefox ETP) aggressively block third-party trackers and limit client-side cookies to 7 days or even 24 hours. In B2B, where a user might visit in January and return in March, this breaks the attribution chain.
+
+The solution: make tracking requests look first-party.
+
+**CNAME Configuration:**
+
+```
+# DNS Configuration
+metrics.yourcompany.com  CNAME  hosted.rudderlabs.com
+```
+
+The browser sees a request to `yourcompany.com`. It permits cookies with longer expiration (up to 400 days).
+
+**Reverse Proxy (More Robust):**
+
+```nginx
+# NGINX configuration for first-party tracking
+server {
+    listen 443 ssl;
+    server_name www.yourcompany.com;
+
+    location /metrics/ {
+        proxy_pass https://your-collector-url.com/;
+        proxy_set_header Host your-collector-url.com;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+This masks tracking requests as a subdirectory of your main site—the highest standard of first-party trust.
+
+### RudderStack Implementation
+
+```javascript
+// RudderStack SDK initialization
+rudderanalytics.load("WRITE_KEY", "DATA_PLANE_URL", {
+  // Enable cookie persistence
+  storage: {
+    cookie: {
+      maxage: 31536000000, // 1 year in milliseconds
+      path: "/",
+      domain: ".yourcompany.com",
+      samesite: "Lax",
+      secure: true,
+    },
+  },
+});
+
+// Track page views with UTM parameters
+rudderanalytics.page("Page Viewed", {
+  url: window.location.href,
+  referrer: document.referrer,
+  utm_source: getQueryParam("utm_source"),
+  utm_medium: getQueryParam("utm_medium"),
+  utm_campaign: getQueryParam("utm_campaign"),
+  utm_content: getQueryParam("utm_content"),
+  utm_term: getQueryParam("utm_term"),
+});
+
+// Identify known users
+rudderanalytics.identify(userId, {
+  email: userEmail,
+  company: companyName,
+});
+```
+
+## Step 2: Identity Resolution
+
+Identity resolution links anonymous browsing history to known users. This is the most fragile part of the system.
+
+**The Flow:**
+1. User visits → Collector generates `anonymous_id` (UUID), stored in cookie
+2. User fills form or logs in → Application fires `identify` call with `user_id`
+3. System records mapping: `anonymous_id` ↔ `user_id`
+
+**The Challenge:** If a user logs in on a new device, they get a new `anonymous_id`. The system must recognize that both anonymous IDs belong to the same person.
+
+```sql
+-- Identity resolution: Building the user map
+-- dbt model: dim_identity_map.sql
+
+WITH identify_events AS (
+    SELECT
+        anonymous_id,
+        user_id,
+        context_traits_email AS email,
+        timestamp,
+        ROW_NUMBER() OVER (
+            PARTITION BY anonymous_id
+            ORDER BY timestamp DESC
+        ) AS rn
+    FROM {{ source('rudderstack', 'identifies') }}
+    WHERE user_id IS NOT NULL
+),
+
+-- Get the most recent identification for each anonymous_id
+latest_identifies AS (
+    SELECT
+        anonymous_id,
+        user_id,
+        email
+    FROM identify_events
+    WHERE rn = 1
+),
+
+-- Build canonical user mapping
+-- If multiple anonymous_ids map to the same user_id, group them
+user_clusters AS (
+    SELECT
+        user_id AS canonical_user_id,
+        anonymous_id,
+        email
+    FROM latest_identifies
+)
+
+SELECT
+    anonymous_id,
+    canonical_user_id,
+    email
+FROM user_clusters
+```
+
+## Step 3: Sessionization
+
+Raw events are a stream of timestamps. You need to group them into sessions.
+
+```sql
+-- Sessionization: Grouping events into sessions
+-- dbt model: int_web_sessions.sql
+
+WITH page_views AS (
+    SELECT
+        anonymous_id,
+        timestamp,
+        context_page_url AS url,
+        context_page_referrer AS referrer,
+        -- Extract UTMs
+        context_campaign_source AS utm_source,
+        context_campaign_medium AS utm_medium,
+        context_campaign_name AS utm_campaign,
+        context_campaign_content AS utm_content
+    FROM {{ source('rudderstack', 'pages') }}
+),
+
+-- Flag new sessions (30-minute inactivity threshold)
+session_flags AS (
+    SELECT
+        *,
+        CASE
+            WHEN TIMESTAMP_DIFF(
+                timestamp,
+                LAG(timestamp) OVER (PARTITION BY anonymous_id ORDER BY timestamp),
+                MINUTE
+            ) > 30 THEN 1
+            ELSE 0
+        END AS is_new_session
+    FROM page_views
+),
+
+-- Generate session IDs
+session_ids AS (
+    SELECT
+        *,
+        CONCAT(
+            anonymous_id,
+            '-',
+            SUM(is_new_session) OVER (
+                PARTITION BY anonymous_id
+                ORDER BY timestamp
+            )
+        ) AS session_id
+    FROM session_flags
+)
+
+SELECT
+    session_id,
+    anonymous_id,
+    MIN(timestamp) AS session_start_at,
+    MAX(timestamp) AS session_end_at,
+    COUNT(*) AS page_views,
+    -- Attribution: First non-null UTM wins for the session
+    FIRST_VALUE(utm_source IGNORE NULLS) OVER (
+        PARTITION BY session_id ORDER BY timestamp
+    ) AS source,
+    FIRST_VALUE(utm_medium IGNORE NULLS) OVER (
+        PARTITION BY session_id ORDER BY timestamp
+    ) AS medium,
+    FIRST_VALUE(utm_campaign IGNORE NULLS) OVER (
+        PARTITION BY session_id ORDER BY timestamp
+    ) AS campaign
+FROM session_ids
+GROUP BY session_id, anonymous_id
+```
+
+## Step 4: The Attribution Spine
+
+The spine is a table where one row = one touchpoint for one opportunity. This is where sessions meet outcomes.
+
+```sql
+-- Attribution spine: Connecting touchpoints to opportunities
+-- dbt model: fct_attribution_spine.sql
+
+WITH opportunities AS (
+    SELECT
+        id AS opportunity_id,
+        account_id,
+        amount,
+        created_date,
+        close_date,
+        is_won
+    FROM {{ ref('stg_salesforce_opportunities') }}
+    WHERE is_won = TRUE
+),
+
+contacts AS (
+    SELECT
+        id AS contact_id,
+        account_id,
+        email
+    FROM {{ ref('stg_salesforce_contacts') }}
+),
+
+identity_map AS (
+    SELECT
+        anonymous_id,
+        email
+    FROM {{ ref('dim_identity_map') }}
+),
+
+sessions AS (
+    SELECT * FROM {{ ref('int_web_sessions') }}
+)
+
+SELECT
+    o.opportunity_id,
+    o.amount AS conversion_value,
+    o.created_date AS conversion_date,
+    s.session_id,
+    s.session_start_at,
+    s.source,
+    s.medium,
+    s.campaign,
+
+    -- Calculate touchpoint position
+    ROW_NUMBER() OVER (
+        PARTITION BY o.opportunity_id
+        ORDER BY s.session_start_at ASC
+    ) AS touch_position,
+
+    COUNT(*) OVER (
+        PARTITION BY o.opportunity_id
+    ) AS total_touches
+
+FROM opportunities o
+-- Join opportunity to account contacts (Account-Based Logic)
+JOIN contacts c ON o.account_id = c.account_id
+-- Join contact to identity map via email
+JOIN identity_map i ON LOWER(c.email) = LOWER(i.email)
+-- Join identity to sessions
+JOIN sessions s ON i.anonymous_id = s.anonymous_id
+
+WHERE
+    -- Lookback window: 90 days before opportunity creation
+    s.session_start_at BETWEEN
+        DATE_SUB(o.created_date, INTERVAL 90 DAY)
+        AND o.created_date
+    -- Exclude sessions with no source
+    AND s.source IS NOT NULL
+```
+
+## Step 5: Weight Allocation
+
+Apply the attribution model logic to the spine.
+
+```sql
+-- Attribution model: Applying weights
+-- dbt model: fct_attribution_model.sql
+
+WITH spine AS (
+    SELECT * FROM {{ ref('fct_attribution_spine') }}
+)
+
+SELECT
+    opportunity_id,
+    session_id,
+    source,
+    medium,
+    campaign,
+    conversion_value,
+    touch_position,
+    total_touches,
+
+    -- Linear Attribution
+    (1.0 / total_touches) * conversion_value AS linear_revenue,
+
+    -- U-Shaped Attribution
+    CASE
+        WHEN touch_position = 1 THEN 0.4
+        WHEN touch_position = total_touches THEN 0.4
+        ELSE 0.2 / NULLIF(total_touches - 2, 0)
+    END * conversion_value AS u_shaped_revenue,
+
+    -- Time-Decay Attribution (7-day half-life)
+    POWER(2, -TIMESTAMP_DIFF(conversion_date, session_start_at, DAY) / 7.0)
+        / SUM(POWER(2, -TIMESTAMP_DIFF(conversion_date, session_start_at, DAY) / 7.0))
+            OVER (PARTITION BY opportunity_id)
+        * conversion_value AS time_decay_revenue
+
+FROM spine
+```
+
+## Step 6: The Final Report
+
+Aggregate attributed revenue by channel.
+
+```sql
+-- Channel performance report
+-- dbt model: rpt_channel_attribution.sql
+
+WITH attributed AS (
+    SELECT * FROM {{ ref('fct_attribution_model') }}
+),
+
+ad_spend AS (
+    -- Pull from Airbyte-synced ad platform data
+    SELECT
+        date,
+        source,
+        medium,
+        campaign,
+        SUM(spend) AS spend
+    FROM {{ ref('stg_ad_spend_unified') }}
+    GROUP BY 1, 2, 3, 4
+)
+
+SELECT
+    a.source,
+    a.medium,
+    a.campaign,
+
+    -- Attributed revenue by model
+    SUM(a.linear_revenue) AS linear_revenue,
+    SUM(a.u_shaped_revenue) AS u_shaped_revenue,
+    SUM(a.time_decay_revenue) AS time_decay_revenue,
+
+    -- Touchpoint counts
+    COUNT(DISTINCT a.opportunity_id) AS opportunities_influenced,
+    COUNT(*) AS total_touches,
+
+    -- Efficiency metrics (join with spend data)
+    COALESCE(SUM(s.spend), 0) AS total_spend,
+    CASE
+        WHEN SUM(s.spend) > 0
+        THEN SUM(a.u_shaped_revenue) / SUM(s.spend)
+        ELSE NULL
+    END AS roas_u_shaped
+
+FROM attributed a
+LEFT JOIN ad_spend s
+    ON a.source = s.source
+    AND a.medium = s.medium
+    AND a.campaign = s.campaign
+    AND DATE(a.session_start_at) = s.date
+GROUP BY 1, 2, 3
+ORDER BY u_shaped_revenue DESC
+```
+
+## Handling B2B Nuances
+
+### The "Direct" Problem
+
+A user clicks an ad, leaves, and returns directly to convert. The ad should get credit, not "Direct."
+
+Implement "Last Non-Direct Click": if a session has no UTMs, inherit from the previous session (within 30 days).
+
+```sql
+-- Campaign persistence for direct traffic
+WITH sessions_with_lag AS (
+    SELECT
+        *,
+        LAG(source) OVER (PARTITION BY anonymous_id ORDER BY session_start_at) AS prev_source,
+        LAG(medium) OVER (PARTITION BY anonymous_id ORDER BY session_start_at) AS prev_medium,
+        LAG(campaign) OVER (PARTITION BY anonymous_id ORDER BY session_start_at) AS prev_campaign,
+        LAG(session_start_at) OVER (PARTITION BY anonymous_id ORDER BY session_start_at) AS prev_session_at
+    FROM {{ ref('int_web_sessions') }}
+)
+
+SELECT
+    session_id,
+    anonymous_id,
+    session_start_at,
+    -- Inherit UTMs from previous session if current is direct/null
+    -- and previous session was within 30 days
+    CASE
+        WHEN source IS NULL
+            AND TIMESTAMP_DIFF(session_start_at, prev_session_at, DAY) <= 30
+        THEN prev_source
+        ELSE source
+    END AS source,
+    CASE
+        WHEN medium IS NULL
+            AND TIMESTAMP_DIFF(session_start_at, prev_session_at, DAY) <= 30
+        THEN prev_medium
+        ELSE medium
+    END AS medium
+FROM sessions_with_lag
+```
+
+### Offline Events
+
+Marketing isn't just digital. Conferences, sales calls, and webinars matter.
+
+Ingest Salesforce Task and CampaignMember objects, normalize to match the session schema, and union before creating the attribution spine.
+
+```sql
+-- Offline touchpoints from Salesforce
+WITH offline_touches AS (
+    SELECT
+        cm.contact_id,
+        c.campaign_name AS campaign,
+        'offline' AS source,
+        c.type AS medium, -- 'Webinar', 'Conference', 'Dinner'
+        cm.created_date AS touch_date
+    FROM {{ ref('stg_salesforce_campaign_members') }} cm
+    JOIN {{ ref('stg_salesforce_campaigns') }} c
+        ON cm.campaign_id = c.id
+),
+
+-- Union with digital sessions
+all_touchpoints AS (
+    SELECT * FROM {{ ref('int_web_sessions') }}
+    UNION ALL
+    SELECT * FROM offline_touches
+)
+
+SELECT * FROM all_touchpoints
+```
+
+### Account-Based Complexity
+
+In B2B, the person researching (User A) is often different from the person signing (User B). The join via `account_id` in the attribution spine handles this—User A's sessions are attributed to User B's opportunity.
+
+You can enhance this by pulling `Role` from Salesforce's `OpportunityContactRole` object. Decision Maker touches might carry 2x weight compared to Influencer touches.
+
+## Closing the Loop: Reverse ETL
+
+Your warehouse attribution data can improve ad platform targeting. Use Reverse ETL (Census, Hightouch) to send conversions back to Facebook/Google via their Conversions APIs.
+
+This "trains" their algorithms with your high-quality, server-side truth—improving audience optimization and reducing wasted spend.
+
+```typescript
+// Reverse ETL configuration (Census example)
+const conversionSync = {
+  source: "snowflake.fct_attribution_model",
+  destination: "facebook_conversions_api",
+  mapping: {
+    email: "email_hash", // SHA-256 hashed
+    event_name: "Purchase",
+    event_time: "conversion_date",
+    value: "conversion_value",
+    currency: "USD",
+  },
+  schedule: "daily",
+};
+```
+
+## Limitations of DIY
+
+Be honest about what you're signing up for:
+
+**Maintenance:** This isn't "set and forget." APIs break. Schema changes in Salesforce can break the dbt pipeline. You need an analytics engineer to maintain it.
+
+**No View-Through:** You generally can't track ad impressions (who saw an ad but didn't click) without access to ad network log files. You're limited to click-through attribution.
+
+**Cold Start Problem:** Identity resolution only works after a user identifies. You can't attribute the history of a user who never fills out a form.
+
+**PLG Complexity:** Product usage data as touchpoints requires additional instrumentation and modeling beyond what's covered here.
+
+## The Implementation Path
+
+**Week 1-2: Collection**
+- Deploy RudderStack or Snowplow with CNAME/proxy configuration
+- Implement identity calls on form submissions and logins
+- Start collecting data immediately—you need history
+
+**Week 3-4: Modeling**
+- Set up dbt project structure
+- Build sessionization and identity resolution models
+- Create attribution spine joining to CRM opportunities
+
+**Week 5-6: Reporting**
+- Implement weight allocation for U-shaped model (start simple)
+- Build channel performance dashboard in Metabase/Lightdash
+- Sync ad spend data via Airbyte for ROAS calculations
+
+**Ongoing: Iteration**
+- Refine identity matching as edge cases emerge
+- Add offline touchpoints from CRM
+- Test different attribution models and compare results
+
+## The ROI Case
+
+A B2B Fintech with heavy LinkedIn spend was quoted $45K/year for Bizible. They built a warehouse-native stack with RudderStack (free), Snowflake ($200/month), and dbt (free).
+
+Their DIY Linear model revealed that "Whitepaper" ads generated leads that stalled, while "Product Demo" video ads had 3x higher CPA but 5x higher win rate. They shifted $20K/month in budget to video ads. ROI improved 140%.
+
+Total infrastructure cost: under $300/month. Insight value: millions in optimized spend.
+
+---
+
+We build warehouse-native attribution systems as part of our [GTM Audit](/services#gtm-audit) track. If you're evaluating whether to buy an enterprise platform or build your own, we can help you assess the trade-offs and—if DIY makes sense—implement the architecture that gives you control over your data and logic.

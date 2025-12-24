@@ -695,6 +695,32 @@ body {
   font-family: var(--font-mono);
 }
 
+/* ===== BLOG TYPOGRAPHY ENHANCEMENTS ===== */
+
+/* H3 accent indicator - terminal style prefix */
+.prose h3::before {
+  content: "//";
+  color: var(--color-terminal-green);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  margin-right: 0.5rem;
+  opacity: 0.8;
+}
+
+/* Numbered list styling - terminal green markers */
+.prose ol > li::marker {
+  color: var(--color-terminal-green);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+/* First paragraph after heading - lead text */
+.prose h2 + p {
+  font-size: 1.125rem;
+  color: var(--color-off-white);
+  opacity: 0.9;
+}
+
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -1,0 +1,254 @@
+---
+title: "Automating Lead Routing with n8n"
+description: "How we reduced lead response times from 2 days to 5 minutes using n8n workflows. A technical breakdown of our lead routing architecture."
+date: "2024-12-20"
+author: "verluna-team"
+category: "automation"
+tags: ["n8n", "lead-routing", "hubspot", "automation"]
+featured: true
+---
+
+## The 5-Minute Window
+
+Lead response time is one of the most impactful metrics in B2B sales. Responding within 5 minutes makes you 21x more likely to qualify a lead compared to waiting 30 minutes.
+
+Yet most companies we audit have response times measured in hours or days. The problem isn't lazy sales reps. It's manual processes creating bottlenecks at every step.
+
+## What Manual Routing Actually Looks Like
+
+Here's the typical flow:
+
+1. Lead fills out a form on your website
+2. Form data lands in HubSpot (or sits in a notification queue)
+3. RevOps or marketing manually reviews the lead
+4. They determine which rep should receive it based on territory, company size, or other criteria
+5. They manually assign the lead in the CRM
+6. The rep eventually notices the new assignment
+
+Each step introduces delay. Each handoff creates risk of the lead falling through cracks.
+
+```typescript
+// Manual routing translated to code
+// Every step is a potential failure point
+
+interface ManualRoutingProcess {
+  formSubmission: "5 seconds";
+  notificationDelivery: "varies (could be minutes)";
+  humanReview: "30 mins to 8 hours (business hours only)";
+  routingDecision: "5-15 minutes";
+  crmAssignment: "2-5 minutes";
+  repNotification: "varies (could miss it entirely)";
+  // Total: anywhere from 1 hour to 2+ days
+}
+```
+
+## The n8n Architecture
+
+We build lead routing workflows in n8n that handle the entire process automatically. Here's the high-level flow:
+
+```
+[HubSpot Webhook] → [n8n Workflow] → [Enrichment] → [Scoring] → [Routing] → [Assignment + Notification]
+```
+
+### Webhook Trigger
+
+The workflow starts with a HubSpot webhook that fires whenever a new contact is created or a form is submitted.
+
+```typescript
+// n8n Webhook node configuration
+{
+  httpMethod: "POST",
+  path: "hubspot-lead-webhook",
+  authentication: "headerAuth",
+  // Validate HubSpot signature for security
+}
+```
+
+### Lead Enrichment
+
+Before routing, we enrich the lead with additional data. This typically involves calling Clearbit or Apollo.
+
+```typescript
+// Enrichment function
+async function enrichLead(email: string) {
+  const enrichment = await clearbit.enrich({
+    email,
+    company: true,
+    person: true,
+  });
+
+  return {
+    companySize: enrichment.company?.metrics?.employees,
+    industry: enrichment.company?.category?.industry,
+    seniority: enrichment.person?.employment?.seniority,
+    location: enrichment.company?.geo?.country,
+  };
+}
+```
+
+### Lead Scoring
+
+With enriched data, we score the lead based on predefined criteria.
+
+```typescript
+// Scoring logic
+function scoreLead(lead: EnrichedLead): number {
+  let score = 0;
+
+  // Company size scoring
+  if (lead.companySize > 500) score += 30;
+  else if (lead.companySize > 100) score += 20;
+  else if (lead.companySize > 20) score += 10;
+
+  // Industry fit
+  if (["SaaS", "Technology", "Software"].includes(lead.industry)) {
+    score += 25;
+  }
+
+  // Seniority
+  if (["executive", "director", "vp"].includes(lead.seniority)) {
+    score += 25;
+  }
+
+  // ICP match bonus
+  if (lead.companySize > 50 && lead.industry === "SaaS") {
+    score += 20;
+  }
+
+  return score;
+}
+```
+
+### Routing Logic
+
+Based on the score and other attributes, we determine the right owner.
+
+```typescript
+// Territory and capacity-based routing
+function routeLead(lead: ScoredLead): string {
+  const { score, location, companySize } = lead;
+
+  // High-value leads go to senior reps
+  if (score >= 70) {
+    return getAvailableRep("enterprise");
+  }
+
+  // Territory-based routing
+  if (location === "US") {
+    return getAvailableRep("us-team");
+  } else if (location === "DE" || location === "EU") {
+    return getAvailableRep("emea-team");
+  }
+
+  // Default to round-robin
+  return getNextRepInRotation();
+}
+
+function getAvailableRep(team: string): string {
+  // Check rep capacity and availability
+  // Return rep with lowest current load
+}
+```
+
+### Assignment and Notification
+
+Finally, we update HubSpot and notify the rep immediately.
+
+```typescript
+// Update HubSpot and notify
+async function assignAndNotify(leadId: string, repId: string) {
+  // Update HubSpot owner
+  await hubspot.contacts.update(leadId, {
+    properties: {
+      hubspot_owner_id: repId,
+      lead_status: "New",
+      lead_source_detail: "Automated Routing",
+    },
+  });
+
+  // Send Slack notification
+  await slack.postMessage({
+    channel: getRepSlackId(repId),
+    text: `New lead assigned: ${leadName}`,
+    blocks: [
+      // Rich formatting with lead details
+      // Score, company info, recommended next action
+    ],
+  });
+
+  // Create task in HubSpot
+  await hubspot.tasks.create({
+    engagement: {
+      type: "TASK",
+      ownerId: repId,
+    },
+    metadata: {
+      subject: `Follow up with ${leadName}`,
+      body: "New high-intent lead - respond within 5 minutes",
+    },
+  });
+}
+```
+
+## Results
+
+After implementing this system for a B2B SaaS client:
+
+- **Lead response time:** 2 days → 5 minutes (95% reduction)
+- **Lead acceptance rate:** +40% (reps more confident in lead quality)
+- **Time spent on manual routing:** 8 hours/week → 0
+
+The ROI was clear within the first month. Sales reps reported higher quality conversations because they were reaching leads while interest was still fresh.
+
+## Implementation Considerations
+
+### Error Handling
+
+Every workflow needs robust error handling.
+
+```typescript
+// Wrap critical operations
+try {
+  await assignAndNotify(leadId, repId);
+} catch (error) {
+  // Log to monitoring
+  await logError(error, { leadId, repId });
+
+  // Fallback: notify RevOps team
+  await slack.postMessage({
+    channel: "#revops-alerts",
+    text: `Lead routing failed for ${leadId}. Manual review required.`,
+  });
+
+  // Still mark as needs attention in CRM
+  await hubspot.contacts.update(leadId, {
+    properties: { lead_status: "Routing Error" },
+  });
+}
+```
+
+### Monitoring
+
+We add monitoring to every workflow:
+
+- **Processing time:** Track how long each lead takes to route
+- **Failure alerts:** Get notified immediately when something breaks
+- **Distribution dashboard:** See routing patterns and response times
+
+### Iteration
+
+The scoring and routing logic isn't static. We review performance monthly and adjust weights based on actual conversion data.
+
+## Key Takeaways
+
+**Start with the webhook.** Real-time triggers are essential for fast response.
+
+**Enrich before routing.** Better data means better routing decisions.
+
+**Build in fallbacks.** Automation should degrade gracefully, not break completely.
+
+**Measure everything.** Track response times, routing accuracy, and conversion by source.
+
+If your team is spending hours on manual lead routing, or your response times are measured in days, this is one of the highest-ROI automation projects you can tackle.
+
+Want to implement automated lead routing? We build these systems as part of our [Autonomous Ops](/services#autonomous-ops) track.

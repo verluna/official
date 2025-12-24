@@ -37,13 +37,13 @@ export function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center pt-16 overflow-hidden"
+      className="relative min-h-screen flex items-center pt-16 pb-20 overflow-hidden"
     >
       {/* Subtle gradient orbs */}
       <div className="absolute top-1/4 -left-64 w-[500px] h-[500px] rounded-full bg-terminal-green/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-64 w-[500px] h-[500px] rounded-full bg-electric-purple/5 blur-[120px] pointer-events-none" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-24 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: Text Content */}
           <motion.div
@@ -165,7 +165,7 @@ export function Hero() {
                     <div className="w-3 h-3 rounded-full bg-green-500/60" />
                   </div>
                   <span className="ml-2 text-xs font-mono text-steel-grey">
-                    workflow.diagram
+                    architecture_examples
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}

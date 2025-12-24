@@ -1,0 +1,371 @@
+---
+title: "Building AI Agents That Actually Work in Production"
+description: "Most AI agent projects fail in production. Here's why, and the engineering patterns that make the difference."
+date: "2024-12-15"
+author: "verluna-team"
+category: "ai-agents"
+tags: ["ai-agents", "automation", "production", "engineering"]
+featured: false
+---
+
+## The Demo vs. Production Gap
+
+Every AI agent demo looks impressive. Natural language in, useful action out. The founder nods, the team gets excited, someone says "this will save us 10 hours a week."
+
+Then you deploy it. And reality hits.
+
+The agent misunderstands edge cases. It hallucinates data that doesn't exist. It takes actions it shouldn't. Or worse, it works 95% of the time, which means it fails unpredictably and you can't trust it.
+
+We've built AI agents that run in production for months without intervention. We've also seen projects fail spectacularly. The difference isn't the model. It's the engineering around it.
+
+## Why Most AI Agents Fail
+
+### Problem 1: Unbounded Scope
+
+The first mistake is giving an agent too much freedom. "Handle customer support inquiries" is not a spec. It's a wish.
+
+An agent needs constraints. What types of inquiries? What actions can it take? What should it escalate?
+
+```typescript
+// Bad: Unbounded agent scope
+const badAgent = {
+  role: "Customer support agent",
+  capabilities: "Handle all customer inquiries",
+  // This will fail. Guaranteed.
+};
+
+// Good: Bounded agent scope
+const goodAgent = {
+  role: "Subscription inquiry handler",
+  capabilities: [
+    "Look up subscription status",
+    "Explain plan features",
+    "Process upgrade requests",
+    "Escalate billing disputes to human",
+  ],
+  constraints: [
+    "Cannot process refunds over $100",
+    "Cannot access payment methods",
+    "Must escalate cancellation requests",
+  ],
+};
+```
+
+### Problem 2: No Verification Layer
+
+LLMs are confident even when wrong. If you take their output and execute it directly, you're asking for trouble.
+
+Every agent needs a verification layer between "what the model thinks" and "what actually happens."
+
+```typescript
+// Agent output verification
+interface AgentAction {
+  type: "lookup" | "update" | "email" | "escalate";
+  target: string;
+  parameters: Record<string, unknown>;
+  reasoning: string;
+}
+
+async function executeWithVerification(action: AgentAction) {
+  // Step 1: Validate action type is allowed
+  if (!allowedActions.includes(action.type)) {
+    return { error: "Action type not permitted" };
+  }
+
+  // Step 2: Validate parameters match schema
+  const validation = validateParameters(action.type, action.parameters);
+  if (!validation.valid) {
+    return { error: validation.message };
+  }
+
+  // Step 3: Check against business rules
+  const ruleCheck = await checkBusinessRules(action);
+  if (ruleCheck.blocked) {
+    return { escalate: true, reason: ruleCheck.reason };
+  }
+
+  // Step 4: Execute with audit trail
+  const result = await execute(action);
+  await logAction(action, result);
+
+  return result;
+}
+```
+
+### Problem 3: Poor Error Recovery
+
+What happens when something goes wrong? Most agents either crash or retry infinitely. Neither is acceptable in production.
+
+Good error handling means graceful degradation: if the agent can't handle something, it should fail safely and alert a human.
+
+```typescript
+// Error recovery patterns
+async function agentWithRecovery(input: string) {
+  const maxRetries = 2;
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result = await processWithAgent(input);
+
+      // Validate output before returning
+      if (isValidOutput(result)) {
+        return result;
+      }
+
+      // Invalid output, try again with more context
+      lastError = new Error("Invalid output format");
+    } catch (error) {
+      lastError = error as Error;
+
+      // Don't retry on certain errors
+      if (isUnrecoverable(error)) {
+        break;
+      }
+    }
+  }
+
+  // All retries failed, escalate
+  await escalateToHuman({
+    input,
+    error: lastError?.message,
+    context: "Agent failed after retries",
+  });
+
+  return { escalated: true };
+}
+```
+
+## The Architecture That Works
+
+After building dozens of production agents, we've settled on a pattern that actually works.
+
+### Layer 1: Intent Classification
+
+Before the agent does anything, classify what the user actually wants. This is a simpler, more reliable task than full reasoning.
+
+```typescript
+// Intent classification
+const intents = [
+  "subscription_inquiry",
+  "technical_support",
+  "billing_question",
+  "feature_request",
+  "complaint",
+  "other",
+] as const;
+
+type Intent = (typeof intents)[number];
+
+async function classifyIntent(message: string): Promise<Intent> {
+  // Use a smaller, faster model for classification
+  const result = await classifier.classify(message, intents);
+
+  // Log for monitoring
+  await logClassification(message, result);
+
+  return result.intent;
+}
+```
+
+### Layer 2: Context Gathering
+
+Once you know the intent, gather the context the agent will need. Don't make the agent figure out what data to fetch. Tell it.
+
+```typescript
+// Context gathering based on intent
+async function gatherContext(intent: Intent, userId: string) {
+  const contextMap: Record<Intent, () => Promise<object>> = {
+    subscription_inquiry: () => getSubscriptionContext(userId),
+    technical_support: () => getTechnicalContext(userId),
+    billing_question: () => getBillingContext(userId),
+    feature_request: () => getProductContext(userId),
+    complaint: () => getFullCustomerContext(userId),
+    other: () => getBasicContext(userId),
+  };
+
+  return contextMap[intent]();
+}
+
+async function getSubscriptionContext(userId: string) {
+  return {
+    currentPlan: await getSubscription(userId),
+    usageStats: await getUsage(userId),
+    availablePlans: await getPlans(),
+    upgradeEligibility: await checkUpgradeEligibility(userId),
+  };
+}
+```
+
+### Layer 3: Constrained Reasoning
+
+Now the agent reasons about what to do. But it reasons within bounds: specific context, specific allowed actions, specific output format.
+
+```typescript
+// Constrained agent prompt
+function buildAgentPrompt(intent: Intent, context: object, message: string) {
+  return `
+You are handling a ${intent} inquiry.
+
+CONTEXT:
+${JSON.stringify(context, null, 2)}
+
+USER MESSAGE:
+${message}
+
+ALLOWED ACTIONS:
+${getAllowedActions(intent).join("\n")}
+
+RESPONSE FORMAT:
+{
+  "action": "one of the allowed actions",
+  "parameters": { ... },
+  "response": "what to tell the user"
+}
+
+Think step by step, then respond with only the JSON.
+  `.trim();
+}
+```
+
+### Layer 4: Action Execution
+
+Execute the action with full verification and audit logging. Every action should be traceable and reversible where possible.
+
+```typescript
+// Action execution with audit trail
+async function executeAction(
+  action: AgentAction,
+  context: { userId: string; conversationId: string }
+) {
+  const auditEntry = {
+    timestamp: new Date().toISOString(),
+    conversationId: context.conversationId,
+    userId: context.userId,
+    action: action.type,
+    parameters: action.parameters,
+    reasoning: action.reasoning,
+    status: "pending" as const,
+  };
+
+  await audit.create(auditEntry);
+
+  try {
+    const result = await actionHandlers[action.type](action.parameters);
+
+    await audit.update(auditEntry.timestamp, {
+      status: "completed",
+      result,
+    });
+
+    return result;
+  } catch (error) {
+    await audit.update(auditEntry.timestamp, {
+      status: "failed",
+      error: (error as Error).message,
+    });
+
+    throw error;
+  }
+}
+```
+
+## Monitoring in Production
+
+An agent without monitoring is a liability. You need to know:
+
+- **Success rate:** What percentage of interactions complete successfully?
+- **Escalation rate:** How often does the agent need human help?
+- **Error patterns:** What types of failures are most common?
+- **Latency:** How long do interactions take?
+
+```typescript
+// Monitoring metrics
+interface AgentMetrics {
+  totalInteractions: number;
+  successfulCompletions: number;
+  escalations: number;
+  errors: number;
+  avgLatencyMs: number;
+  intentDistribution: Record<string, number>;
+  actionDistribution: Record<string, number>;
+}
+
+async function recordInteraction(interaction: {
+  success: boolean;
+  escalated: boolean;
+  error?: string;
+  latencyMs: number;
+  intent: string;
+  actions: string[];
+}) {
+  await metrics.increment("agent.interactions.total");
+
+  if (interaction.success) {
+    await metrics.increment("agent.interactions.success");
+  }
+
+  if (interaction.escalated) {
+    await metrics.increment("agent.interactions.escalated");
+  }
+
+  if (interaction.error) {
+    await metrics.increment("agent.interactions.error");
+    await metrics.incrementTag("agent.errors", interaction.error);
+  }
+
+  await metrics.histogram("agent.latency", interaction.latencyMs);
+}
+```
+
+## When Not to Use Agents
+
+Not every problem needs an AI agent. Sometimes a simple rule-based system is better.
+
+**Use agents when:**
+
+- The input is truly unstructured
+- The logic requires judgment, not just rules
+- The task has many valid approaches
+
+**Use rules when:**
+
+- The logic is well-defined
+- You need guaranteed behavior
+- Speed and cost matter more than flexibility
+
+```typescript
+// Sometimes rules are better
+function shouldUseAgent(task: TaskDefinition): boolean {
+  // If you can write the logic as rules, do that instead
+  if (task.hasCompleteRuleSet) return false;
+
+  // If failures have high cost, add more verification
+  if (task.failureCost === "high") {
+    task.verificationLevel = "strict";
+  }
+
+  // If latency matters, consider simpler approaches
+  if (task.latencyRequirement < 500) {
+    console.warn("Agent may not meet latency requirements");
+  }
+
+  return task.requiresJudgment && !task.hasCompleteRuleSet;
+}
+```
+
+## Getting Started
+
+If you're building your first production agent, start small.
+
+**Pick one narrow use case.** Not "handle support." Something like "answer questions about subscription plans."
+
+**Define explicit boundaries.** What can the agent do? What should it escalate? Write it down.
+
+**Build the verification layer first.** Before the agent can do anything, make sure you can validate and audit its actions.
+
+**Monitor from day one.** You can't improve what you can't measure.
+
+**Plan for failure.** Every agent will fail sometimes. Make sure failures are graceful and visible.
+
+We build custom AI agents as part of our [Custom AI Agents](/services#custom-agents) track. If you're exploring whether agents make sense for your use case, we're happy to talk through it.

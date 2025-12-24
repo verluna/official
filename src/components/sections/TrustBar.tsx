@@ -11,11 +11,11 @@ interface Client {
 }
 
 const clients: Client[] = [
-  { name: "DeepL", logo: "/images/clients/deepl.svg", caseStudyId: "001" },
+  { name: "DeepL", logo: "/images/clients/deepl.svg" },
   { name: "Concentrix", logo: "/images/clients/concentrix.svg" },
-  { name: "TechCorp", logo: "/images/clients/techcorp.svg", caseStudyId: "002" },
-  { name: "ScaleUp", logo: "/images/clients/scaleup.svg" },
-  { name: "CloudNet", logo: "/images/clients/cloudnet.svg", caseStudyId: "003" },
+  { name: "Tradelite Solutions", logo: "/images/clients/tradelite.svg" },
+  { name: "NonNocere", logo: "/images/clients/nonnocere.svg" },
+  { name: "Delta.io", logo: "/images/clients/deltaio.svg" },
 ];
 
 export function TrustBar() {

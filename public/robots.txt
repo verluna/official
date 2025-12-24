@@ -1,0 +1,18 @@
+# Verluna robots.txt
+# https://verluna.com
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://verluna.com/sitemap.xml
+
+# Disallow API routes
+Disallow: /api/
+
+# Allow search engines to crawl all public pages
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /

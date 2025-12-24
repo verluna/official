@@ -87,16 +87,11 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
                         {children}
                       </ol>
                     ),
-                    li: ({ children, ...props }) => {
-                      const isOrdered = props.node?.parent?.type === 'element' &&
-                        (props.node?.parent as { tagName?: string })?.tagName === 'ol';
+                    li: ({ children }) => {
                       return (
                         <li className="flex items-start gap-2">
-                          <span className={cn(
-                            'flex-shrink-0 mt-0.5',
-                            isOrdered ? 'text-electric-purple font-mono text-xs' : 'text-terminal-green'
-                          )}>
-                            {isOrdered ? `${(props.node?.position?.start?.line || 1)}.` : '•'}
+                          <span className="flex-shrink-0 mt-0.5 text-terminal-green">
+                            •
                           </span>
                           <span className="flex-1">{children}</span>
                         </li>

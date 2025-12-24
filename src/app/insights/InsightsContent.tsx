@@ -84,7 +84,11 @@ export function InsightsContent({
 
             {/* All posts grid */}
             <div className="grid md:grid-cols-2 gap-6">
-              {regularPosts.map((post, i) => (
+              {/* When filtered, show all posts; otherwise show only non-featured */}
+              {(selectedCategory || selectedTag
+                ? filteredPosts
+                : regularPosts
+              ).map((post, i) => (
                 <BlogCard key={post.slug} post={post} delay={i * 0.05} />
               ))}
             </div>

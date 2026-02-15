@@ -27,7 +27,7 @@ export function Footer() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-steel-grey">&gt; Copyright:</span>
-              <span className="text-off-white">2025 Verluna</span>
+              <span className="text-off-white">2026 Verluna</span>
             </div>
           </div>
 
@@ -44,10 +44,16 @@ export function Footer() {
                 Services
               </Link>
               <Link
-                href="/work"
+                href="/case-studies"
                 className="text-sm text-off-white hover:text-terminal-green transition-colors"
               >
-                Work
+                Case Studies
+              </Link>
+              <Link
+                href="/resources"
+                className="text-sm text-off-white hover:text-terminal-green transition-colors"
+              >
+                Resources
               </Link>
               <Link
                 href="/#about"
@@ -60,12 +66,6 @@ export function Footer() {
                 className="text-sm text-off-white hover:text-terminal-green transition-colors"
               >
                 FAQ
-              </Link>
-              <Link
-                href="/#contact"
-                className="text-sm text-off-white hover:text-terminal-green transition-colors"
-              >
-                Contact
               </Link>
             </nav>
           </div>

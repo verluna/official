@@ -8,6 +8,7 @@ import { TrustBar } from "@/components/sections/TrustBar";
 import { Contact } from "@/components/sections/Contact";
 import { Badge } from "@/components/ui";
 import { getFounder, certifications } from "@/data/team";
+import { aboutCopy } from "@/data/copy/about";
 
 export function AboutContent() {
   const founder = getFounder();
@@ -42,27 +43,22 @@ export function AboutContent() {
                 </div>
 
                 <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4">
-                  Building Revenue Infrastructure That Runs Itself
+                  {aboutCopy.mission.heading}
                 </h2>
 
                 <div className="space-y-4 text-steel-grey leading-relaxed">
-                  <p>
-                    The biggest risk to any business is having marketing, sales,
-                    and operations work in silos. When these functions don't
-                    connect, leads fall through cracks, data gets messy, and
-                    growth slows down.
-                  </p>
-                  <p>
-                    At Verluna, we're the architects who connect them. We build
-                    single, cohesive systems that drive sustainable revenue.
-                    We're both high-level strategists who can align with the
-                    C-suite and hands-on operators who build the automation and
-                    CRM workflows from scratch.
-                  </p>
-                  <p className="text-off-white font-medium">
-                    While others build slide decks, we build systems. While they
-                    create campaigns, we create infrastructure.
-                  </p>
+                  {aboutCopy.mission.paragraphs.map((paragraph, index) => (
+                    <p
+                      key={index}
+                      className={
+                        index === aboutCopy.mission.paragraphs.length - 1
+                          ? "text-off-white font-medium"
+                          : undefined
+                      }
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
                 </div>
               </div>
             </div>

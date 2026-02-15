@@ -8,7 +8,8 @@ import { Button } from "@/components/ui";
 
 const navLinks = [
   { href: "/services", label: "Services" },
-  { href: "/work", label: "Work" },
+  { href: "/case-studies", label: "Case Studies" },
+  { href: "/resources", label: "Resources" },
   { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
@@ -119,8 +120,8 @@ export function Header() {
 
           {/* CTA */}
           <div className="hidden md:block">
-            <Button variant="secondary" size="sm" href="/#contact">
-              Initialize Project
+            <Button variant="secondary" size="sm" href="https://calendly.com/verluna-intro-call">
+              Book a Call
             </Button>
           </div>
 
@@ -188,8 +189,8 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              <Button variant="secondary" size="sm" href="/#contact">
-                Initialize Project
+              <Button variant="secondary" size="sm" href="https://calendly.com/verluna-intro-call">
+                Book a Call
               </Button>
             </nav>
           </motion.div>

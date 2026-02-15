@@ -30,6 +30,14 @@ export default {
           elevated: "#1A1A1A",
           border: "#262626",
         },
+
+        // Semantic aliases
+        success: "#00FF94",
+        error: "#EF4444",
+        warning: "#F59E0B",
+
+        // Interactive states
+        "surface-hover": "#1E1E1E",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "Inter", "system-ui", "sans-serif"],

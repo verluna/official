@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { homeCopy } from "@/data/copy/home";
 
 interface Client {
   name: string;
@@ -29,10 +30,10 @@ export function TrustBar() {
           className="text-center mb-10"
         >
           <p className="text-sm font-mono text-steel-grey uppercase tracking-wider">
-            Trusted by Industry Leaders
+            {homeCopy.trustBar.label}
           </p>
           <p className="mt-2 text-xs text-steel-grey/60">
-            50+ systems built &bull; 2,000+ hours automated
+            {homeCopy.trustBar.metricsLine}
           </p>
         </motion.div>
 

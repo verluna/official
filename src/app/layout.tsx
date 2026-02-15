@@ -16,24 +16,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Verluna | GTM Engineering & AI Solutions",
+  title: "Verluna | Stop Doing GTM by Hand",
   description:
-    "We turn manual GTM operations into automated code. Specialized engineering for HubSpot, Salesforce, and AI Agents.",
+    "Your GTM runs on spreadsheets and Slack pings. It should run on code. Verluna audits, automates, and scales your go-to-market operations.",
   keywords: [
     "GTM Engineering",
+    "GTM Automation",
     "Revenue Operations",
     "AI Agents",
-    "HubSpot",
-    "Salesforce",
-    "Automation",
-    "n8n",
+    "HubSpot Automation",
+    "Salesforce Automation",
+    "Go-to-Market",
+    "B2B SaaS",
   ],
   authors: [{ name: "Verluna" }],
   metadataBase: new URL("https://verluna.com"),
   openGraph: {
-    title: "Verluna | GTM Engineering & AI Solutions",
+    title: "Verluna | Stop Doing GTM by Hand",
     description:
-      "Architecting Autonomous Revenue Engines. We turn manual GTM operations into automated code.",
+      "Your GTM runs on spreadsheets and Slack pings. It should run on code. 50+ systems built. 2,000+ hours automated.",
     url: "https://verluna.com",
     siteName: "Verluna",
     images: [
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Verluna - GTM Engineering & AI Solutions",
+        alt: "Verluna — Stop Doing GTM by Hand",
       },
     ],
     type: "website",
@@ -49,9 +50,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Verluna | GTM Engineering & AI Solutions",
+    title: "Verluna | Stop Doing GTM by Hand",
     description:
-      "Architecting Autonomous Revenue Engines. We turn manual GTM operations into automated code.",
+      "Your GTM runs on spreadsheets and Slack pings. It should run on code. 50+ systems built. 2,000+ hours automated.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -74,7 +75,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   name: "Verluna",
-  description: "GTM Engineering & AI Solutions",
+  description:
+    "GTM engineering firm that audits, automates, and scales go-to-market operations for B2B SaaS companies.",
   url: "https://verluna.com",
   email: "info@verluna.de",
   address: {
@@ -82,7 +84,11 @@ const jsonLd = {
     addressLocality: "Berlin",
     addressCountry: "DE",
   },
-  serviceType: ["GTM Automation", "AI Agents", "RevOps Engineering"],
+  serviceType: [
+    "GTM Audit & Pipeline Analysis",
+    "Marketing & Sales Automation",
+    "AI Agent Development",
+  ],
   areaServed: "Worldwide",
   priceRange: "$$$$",
 };

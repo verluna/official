@@ -37,7 +37,7 @@ export const teamMembers: TeamMember[] = [
     id: "tolga-oral",
     name: "Tolga Oral",
     role: "Founder & GTM Engineer",
-    bio: "For the past 8+ years, I've been focused on one thing: architecting the integrated growth engines that scale ambitious tech companies. I deliberately built my career across marketing, sales, and operations because I believe the biggest risk to any business is having these functions work in silos. My role is to be the architect who connects them, building a single, cohesive system that drives sustainable revenue.",
+    bio: "8 years building revenue systems across e-commerce, fintech, gaming, travel, healthcare, and B2B SaaS. Managed EUR 1M+ per month in ad spend. Grew teams from 12 to 45 people. Led 120K app installs and EUR 500K in funding for a fintech startup. Now building at the intersection of marketing automation and applied AI at DeepL, while running Verluna as a dedicated GTM engineering practice.",
     expertise: [
       "GTM Strategy",
       "AI Automation",

@@ -1,23 +1,23 @@
 import {
-  Hero,
+  HeroSB7,
   TrustBar,
   ProblemSolution,
-  Capabilities,
-  Repository,
-  About,
-  Contact,
+  GuideIntro,
+  PlanSteps,
+  SuccessStories,
+  CTASection,
 } from "@/components/sections";
 
 export default function Home() {
   return (
     <>
-      <Hero />
+      <HeroSB7 />
       <TrustBar />
       <ProblemSolution />
-      <Capabilities />
-      <Repository />
-      <About />
-      <Contact />
+      <GuideIntro />
+      <PlanSteps />
+      <SuccessStories />
+      <CTASection />
     </>
   );
 }

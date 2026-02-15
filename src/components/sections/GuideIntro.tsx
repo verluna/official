@@ -24,7 +24,7 @@ export function GuideIntro() {
           className="flex items-center gap-3 mb-4"
         >
           <span className="text-terminal-green font-mono">&gt;</span>
-          <span className="text-sm font-mono text-steel-grey uppercase tracking-wider">
+          <span className="text-sm text-steel-grey uppercase tracking-wider">
             {guideIntro.sectionLabel}
           </span>
         </motion.div>
@@ -79,7 +79,7 @@ export function GuideIntro() {
                   >
                     {metric.value}
                   </motion.div>
-                  <div className="text-sm text-steel-grey font-mono">
+                  <div className="text-sm text-steel-grey">
                     {metric.label}
                   </div>
                 </div>

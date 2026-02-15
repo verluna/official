@@ -64,7 +64,7 @@ export function HeroSB7() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-terminal-green opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-terminal-green" />
               </span>
-              <span className="font-mono text-xs text-steel-grey uppercase tracking-wider">
+              <span className="text-xs text-steel-grey uppercase tracking-wider">
                 {hero.badge}
               </span>
             </motion.div>
@@ -124,6 +124,26 @@ export function HeroSB7() {
                 <Download className="w-4 h-4 mr-2" />
                 {hero.ctaSecondary.label}
               </Button>
+            </motion.div>
+
+            {/* Social proof metrics */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-wrap items-center gap-4 sm:gap-6"
+            >
+              {hero.heroMetrics.map((m, i) => (
+                <div
+                  key={m.label}
+                  className={`flex flex-col ${i > 0 ? "border-l border-surface-border pl-4 sm:pl-6" : ""}`}
+                >
+                  <span className="font-mono text-xl text-terminal-green font-semibold">
+                    {m.value}
+                  </span>
+                  <span className="text-xs text-steel-grey tracking-wider">
+                    {m.label}
+                  </span>
+                </div>
+              ))}
             </motion.div>
 
             {/* Tech stack */}

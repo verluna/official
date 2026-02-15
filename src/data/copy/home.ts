@@ -7,6 +7,7 @@ export interface HeroCopy {
   subheadline: string;
   ctaPrimary: { label: string; href: string };
   ctaSecondary: { label: string; href: string };
+  heroMetrics: { value: string; label: string }[];
   techStack: string[];
 }
 
@@ -79,6 +80,11 @@ export const homeCopy: HomeCopy = {
       "You built the team. You bought the tools. But leads still leak, attribution is guesswork, and your ops team spends 20 hours a week on tasks a script could handle in seconds.",
     ctaPrimary: { label: "Book Your Free Audit Call", href: "/contact" },
     ctaSecondary: { label: "Download GTM Checklist", href: "/resources/gtm-checklist" },
+    heroMetrics: [
+      { value: "50+", label: "Systems Built" },
+      { value: "2,000+", label: "Hours Automated" },
+      { value: "$600K+", label: "Pipeline Recovered" },
+    ],
     techStack: ["n8n", "Python", "HubSpot", "Claude", "Salesforce", "FastAPI"],
   },
 

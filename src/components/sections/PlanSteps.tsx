@@ -32,7 +32,7 @@ export function PlanSteps() {
           className="flex items-center gap-3 mb-4"
         >
           <span className="text-terminal-green font-mono">&gt;</span>
-          <span className="text-sm font-mono text-steel-grey uppercase tracking-wider">
+          <span className="text-sm text-steel-grey uppercase tracking-wider">
             {planSteps.sectionLabel}
           </span>
         </motion.div>

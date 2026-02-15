@@ -66,6 +66,35 @@ export function AboutContent() {
         </div>
       </section>
 
+      {/* Solo Expert Positioning */}
+      <section className="py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="border-l-2 border-terminal-green pl-8">
+              <h3 className="text-2xl font-semibold tracking-tight text-off-white mb-4">
+                {aboutCopy.soloPositioning.heading}
+              </h3>
+              <p className="text-steel-grey leading-relaxed mb-6">
+                {aboutCopy.soloPositioning.statement}
+              </p>
+              <ul className="space-y-3">
+                {aboutCopy.soloPositioning.benefits.map((benefit, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-steel-grey">
+                    <span className="mt-0.5 text-terminal-green font-mono">&gt;</span>
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Team Section */}
       <section className="py-16 bg-charcoal/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

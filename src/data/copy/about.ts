@@ -24,6 +24,11 @@ export interface ValueItem {
 export interface AboutCopy {
   mission: MissionCopy;
   founder: FounderCopy;
+  soloPositioning: {
+    heading: string;
+    statement: string;
+    benefits: string[];
+  };
   values: ValueItem[];
 }
 
@@ -38,9 +43,21 @@ export const aboutCopy: AboutCopy = {
     ],
   },
 
+  soloPositioning: {
+    heading: "One Engineer. Zero Handoffs.",
+    statement:
+      "You work directly with the person who architects, builds, and deploys your systems. No project managers relaying requirements. No junior developers learning on your budget. Every conversation moves the build forward.",
+    benefits: [
+      "Direct access to 8 years of GTM engineering experience",
+      "Same person on the discovery call builds your system",
+      "Faster iteration — no approval chains or knowledge gaps",
+      "Full accountability — one engineer, one outcome",
+    ],
+  },
+
   founder: {
     name: "Tolga Oral",
-    role: "Founder & GTM Engineer",
+    role: "Founder & Principal Engineer",
     credibilityBio:
       "8 years building revenue systems across e-commerce, fintech, gaming, travel, healthcare, and B2B SaaS. Managed EUR 1M+ per month in ad spend. Grew teams from 12 to 45 people. Led 120K app installs and EUR 500K in funding for a fintech startup. Now building at the intersection of marketing automation and applied AI at DeepL, while running Verluna as a dedicated GTM engineering practice.",
     transformationStatement:

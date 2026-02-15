@@ -5,10 +5,14 @@ import {
   GuideIntro,
   PlanSteps,
   SuccessStories,
+  LatestInsights,
   CTASection,
 } from "@/components/sections";
+import { getFeaturedPosts } from "@/lib/blog/posts";
 
 export default function Home() {
+  const featuredPosts = getFeaturedPosts();
+
   return (
     <>
       <HeroSB7 />
@@ -17,6 +21,7 @@ export default function Home() {
       <GuideIntro />
       <PlanSteps />
       <SuccessStories />
+      <LatestInsights posts={featuredPosts} />
       <CTASection />
     </>
   );

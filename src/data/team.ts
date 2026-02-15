@@ -36,7 +36,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: "tolga-oral",
     name: "Tolga Oral",
-    role: "Founder & GTM Engineer",
+    role: "Founder & Principal Engineer",
     bio: "8 years building revenue systems across e-commerce, fintech, gaming, travel, healthcare, and B2B SaaS. Managed EUR 1M+ per month in ad spend. Grew teams from 12 to 45 people. Led 120K app installs and EUR 500K in funding for a fintech startup. Now building at the intersection of marketing automation and applied AI at DeepL, while running Verluna as a dedicated GTM engineering practice.",
     expertise: [
       "GTM Strategy",

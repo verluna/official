@@ -24,7 +24,7 @@ export function SuccessStories() {
           className="flex items-center gap-3 mb-4"
         >
           <span className="text-terminal-green font-mono">&gt;</span>
-          <span className="text-sm font-mono text-steel-grey uppercase tracking-wider">
+          <span className="text-sm text-steel-grey uppercase tracking-wider">
             {successStories.sectionLabel}
           </span>
         </motion.div>
@@ -51,7 +51,7 @@ export function SuccessStories() {
                 delay={index * 0.1}
               >
                 <div className="p-6">
-                  <span className="text-xs font-mono text-steel-grey uppercase tracking-wider">
+                  <span className="text-xs text-steel-grey uppercase tracking-wider">
                     {story.industry}
                   </span>
                   <div className="text-2xl font-mono text-terminal-green mt-2 mb-3">

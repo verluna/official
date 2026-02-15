@@ -6,6 +6,7 @@ export { ProblemSolution } from "./ProblemSolution";
 export { GuideIntro } from "./GuideIntro";
 export { PlanSteps } from "./PlanSteps";
 export { SuccessStories } from "./SuccessStories";
+export { LatestInsights } from "./LatestInsights";
 export { CTASection } from "./CTASection";
 export { Capabilities } from "./Capabilities";
 export { Repository } from "./Repository";

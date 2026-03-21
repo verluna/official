@@ -1,21 +1,21 @@
 import { Metadata } from "next";
-import { PageHeader } from "@/components/ui";
 import { CaseStudiesContent } from "./CaseStudiesContent";
 
 export const metadata: Metadata = {
-  title: "Case Studies | Verluna",
+  title: "Case Studies | Verluna - Agent Operations Results",
   description:
-    "See how we've helped B2B companies automate their GTM operations and grow pipeline.",
+    "Real operations problems, engineered systems, measurable results. See how Verluna builds agent-powered operations for European enterprises.",
+  openGraph: {
+    title: "Case Studies | Verluna - Results, Not Promises",
+    description:
+      "From 4 hours to 90 seconds. From 3 days to 15 minutes. From zero scoring to three-score attribution. Real results from real systems.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://verluna.com/case-studies",
+  },
 };
 
 export default function CaseStudiesPage() {
-  return (
-    <>
-      <PageHeader
-        title="Case Studies"
-        description="Real problems. Engineered solutions. Measurable results."
-      />
-      <CaseStudiesContent />
-    </>
-  );
+  return <CaseStudiesContent />;
 }

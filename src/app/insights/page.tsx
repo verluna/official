@@ -6,16 +6,20 @@ import {
   getCategoriesWithCount,
   getTagsWithCount,
 } from "@/lib/blog/posts";
+import { InsightsHero } from "./InsightsHero";
 
 export const metadata: Metadata = {
-  title: "Insights | Verluna - GTM Engineering Blog",
+  title: "Insights | Verluna - Agent Operations Knowledge",
   description:
-    "Explore insights on GTM Engineering, AI Agents, Automation, and Revenue Operations. Technical deep-dives and case studies from the Verluna team.",
+    "Patterns, frameworks, and operational intelligence on agent operations, GTM engineering, and AI-native systems for European enterprises.",
   openGraph: {
-    title: "Insights | Verluna - GTM Engineering Blog",
+    title: "Insights | Verluna - Agent Operations Knowledge",
     description:
-      "Technical insights on GTM Engineering, AI Agents, and Automation.",
+      "Patterns from real engagements, architectural decisions, and frameworks for agent-powered operations.",
     type: "website",
+  },
+  alternates: {
+    canonical: "https://verluna.com/insights",
   },
 };
 
@@ -26,11 +30,7 @@ export default function InsightsPage() {
 
   return (
     <>
-      <PageHeader
-        label="Insights"
-        title="Engineering Knowledge Base"
-        description="Technical deep-dives, case studies, and insights on GTM Engineering, AI Agents, and Revenue Operations. We share what we learn building autonomous revenue engines."
-      />
+      <InsightsHero />
       <InsightsContent
         initialPosts={posts}
         categories={categories}

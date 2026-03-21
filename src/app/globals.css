@@ -68,8 +68,8 @@
   --space-24: 96px;
 
   /* Font families */
-  --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), "JetBrains Mono", "Fira Code", monospace;
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", "Fira Code", monospace;
 
   /* Animations */
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -114,6 +114,16 @@
   @keyframes circuitPulse {
     0%, 100% { opacity: 0.1; }
     50% { opacity: 0.3; }
+  }
+
+  @keyframes gridShift {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  @keyframes orbFloat {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-40px, 30px); }
   }
 }
 

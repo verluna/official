@@ -1,27 +1,21 @@
 import { Metadata } from "next";
-import { PageHeader } from "@/components/ui";
 import { AboutContent } from "./AboutContent";
 
 export const metadata: Metadata = {
-  title: "About | Verluna - GTM Engineering",
+  title: "About | Verluna - Agent Operations for Europe",
   description:
-    "Meet the team behind Verluna. Engineers who understand go-to-market. We build autonomous revenue engines using code, not configuration.",
+    "Verluna was founded by Tolga Oral, a marketing operations practitioner who built production AI systems across 300+ sessions. Based in Berlin, serving European enterprises.",
   openGraph: {
-    title: "About Verluna | GTM Engineering Team",
+    title: "About Verluna | Built by a Practitioner, Not a Consultant",
     description:
-      "Engineers who understand go-to-market. We build autonomous revenue engines using code, not configuration.",
+      "300+ AI sessions. 83 automation skills built. 12 system integrations. Founded by a marketing ops leader who learned to code with AI.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://verluna.com/about",
   },
 };
 
 export default function AboutPage() {
-  return (
-    <>
-      <PageHeader
-        label="About"
-        title="Engineers Who Understand Go-To-Market"
-        description="We're not a marketing agency. We're engineers who apply software engineering principles to revenue operations because that's what modern GTM requires."
-      />
-      <AboutContent />
-    </>
-  );
+  return <AboutContent />;
 }

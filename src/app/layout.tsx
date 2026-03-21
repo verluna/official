@@ -1,40 +1,43 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Providers } from "@/components/providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Verluna | Stop Doing GTM by Hand",
+  title: "Verluna — Agent Operations for European Enterprises",
   description:
-    "Your GTM runs on spreadsheets and Slack pings. It should run on code. Verluna audits, automates, and scales your go-to-market operations.",
+    "Verluna designs, builds, and runs the operating layer between AI agents and European enterprises. Working systems, not strategy decks. Based in Berlin.",
   keywords: [
-    "GTM Engineering",
+    "Agent Operations",
+    "AI Agent Consulting",
     "GTM Automation",
-    "Revenue Operations",
-    "AI Agents",
-    "HubSpot Automation",
-    "Salesforce Automation",
-    "Go-to-Market",
-    "B2B SaaS",
+    "Marketing Operations",
+    "Agent Architecture",
+    "AI Consulting Europe",
+    "DACH Automation",
+    "Berlin",
+    "Autonomous Systems",
   ],
   authors: [{ name: "Verluna" }],
   metadataBase: new URL("https://verluna.com"),
   openGraph: {
-    title: "Verluna | Stop Doing GTM by Hand",
+    title: "Verluna — Agent Operations for European Enterprises",
     description:
-      "Your GTM runs on spreadsheets and Slack pings. It should run on code. 50+ systems built. 2,000+ hours automated.",
+      "We design, build, and run the operating layer between AI agents and your business. Working systems, not strategy decks.",
     url: "https://verluna.com",
     siteName: "Verluna",
     images: [
@@ -42,17 +45,17 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Verluna — Stop Doing GTM by Hand",
+        alt: "Verluna — Agent Operations for European Enterprises",
       },
     ],
     type: "website",
-    locale: "en_US",
+    locale: "en_EU",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Verluna | Stop Doing GTM by Hand",
+    title: "Verluna — Agent Operations for European Enterprises",
     description:
-      "Your GTM runs on spreadsheets and Slack pings. It should run on code. 50+ systems built. 2,000+ hours automated.",
+      "We design, build, and run the operating layer between AI agents and your business. Working systems, not strategy decks.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -71,27 +74,43 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
+// Safe: hardcoded static JSON-LD — no user input involved
+const organizationSchemaJson = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
+  "@type": "Organization",
   name: "Verluna",
-  description:
-    "GTM engineering firm that audits, automates, and scales go-to-market operations for B2B SaaS companies.",
   url: "https://verluna.com",
-  email: "info@verluna.de",
+  logo: "https://verluna.com/verluna-logo.svg",
+  description:
+    "Verluna designs, builds, and runs agent operations for B2B enterprises across DACH and the EU. Six-phase methodology. Production deployments. Working systems, not strategy decks.",
+  email: "hello@verluna.com",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Berlin",
     addressCountry: "DE",
   },
-  serviceType: [
-    "GTM Audit & Pipeline Analysis",
-    "Marketing & Sales Automation",
-    "AI Agent Development",
+  areaServed: [
+    { "@type": "Country", name: "Germany" },
+    { "@type": "Country", name: "Austria" },
+    { "@type": "Country", name: "Switzerland" },
+    { "@type": "Continent", name: "Europe" },
   ],
-  areaServed: "Worldwide",
-  priceRange: "$$$$",
-};
+  serviceType: [
+    "GTM Audit",
+    "GTM Build",
+    "Managed Agent Operations",
+    "Agent Architecture Consulting",
+  ],
+  founder: {
+    "@type": "Person",
+    name: "Tolga Oral",
+    jobTitle: "Founder & Agent Architect",
+  },
+  sameAs: [
+    "https://linkedin.com/in/tolgaoral",
+    "https://github.com/tolgaoral",
+  ],
+});
 
 export default function RootLayout({
   children,
@@ -101,20 +120,19 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        {/* Safe: static hardcoded JSON-LD for structured data — no user input */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: organizationSchemaJson }}
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-charcoal text-off-white min-h-screen`}
+        className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-charcoal text-off-white min-h-screen`}
       >
         <Providers>
           <div className="relative bg-circuit-grid">
-            {/* Dot grid background with parallax - now handled by CSS bg-circuit-grid */}
-            {/* 3D particle field is rendered by Providers component */}
-
-            {/* Gradient orbs for ambient lighting */}
+            {/* Ambient gradient orbs */}
             <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-electric-purple/5 rounded-full blur-[120px] pointer-events-none z-[1]" />
             <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-terminal-green/5 rounded-full blur-[100px] pointer-events-none z-[1]" />
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-signal-blue/3 rounded-full blur-[150px] pointer-events-none z-[1]" />
@@ -124,7 +142,7 @@ export default function RootLayout({
 
             {/* Content */}
             <div className="relative z-10">
-              {/* Skip to content link for accessibility */}
+              {/* Skip to content */}
               <a
                 href="#main"
                 className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-terminal-green focus:text-void focus:rounded focus:font-medium focus:outline-none"

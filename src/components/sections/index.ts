@@ -1,3 +1,4 @@
+// Legacy exports (kept for other pages that may reference them)
 export { Hero } from "./Hero";
 export { HeroSB7 } from "./HeroSB7";
 export { HeroDiagram } from "./HeroDiagram";
@@ -12,3 +13,17 @@ export { Capabilities } from "./Capabilities";
 export { Repository } from "./Repository";
 export { About } from "./About";
 export { Contact } from "./Contact";
+
+// New homepage sections (v2 redesign)
+export { HeroNew } from "./HeroNew";
+export { ProblemStatement } from "./ProblemStatement";
+export { HowWeSolveIt } from "./HowWeSolveIt";
+export { MethodologyInteractive } from "./MethodologyInteractive";
+export { ServicesGrid } from "./ServicesGrid";
+export { EuropeanDifferentiator } from "./EuropeanDifferentiator";
+export { SocialProof } from "./SocialProof";
+export { CaseStudyFeature } from "./CaseStudyFeature";
+export { ScorecardCTA } from "./ScorecardCTA";
+export { InsightsTease } from "./InsightsTease";
+export { FounderAbout } from "./FounderAbout";
+export { FinalCTA } from "./FinalCTA";

@@ -1,5 +1,7 @@
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
+import { NextRequest } from 'next/server';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // Comprehensive system prompt based on SKILL.md knowledge base
 const SYSTEM_PROMPT = `You are the Verluna Assistant, the AI-powered support agent for Verluna, a GTM (Go-To-Market) Engineering consultancy based in Berlin, Germany.
@@ -126,16 +128,16 @@ function convertMessages(messages: UIMessage[]) {
   });
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  // Rate limit: 10 req/min per IP
+  const rl = await checkRateLimit(req, { maxRequests: 10, windowMs: 60_000 });
+  if (!rl.success) return rl.response!;
+
   try {
     const { messages } = await req.json();
 
     // Convert UI messages to model messages format
     const modelMessages = convertMessages(messages);
-
-    // Rate limiting check (simple implementation)
-    const clientIP = req.headers.get('x-forwarded-for') || 'unknown';
-    // In production, you'd want to implement proper rate limiting with Redis or similar
 
     const result = streamText({
       model: openai('gpt-4o'),

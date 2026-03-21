@@ -4,7 +4,10 @@ import { PageHeader } from "@/components/ui";
 export const metadata: Metadata = {
   title: "Privacy Policy | Verluna",
   description:
-    "How Verluna collects, uses, and protects your personal information.",
+    "How Verluna collects, uses, and protects your personal information. GDPR compliant. Berlin, Germany jurisdiction.",
+  alternates: {
+    canonical: "https://verluna.com/privacy",
+  },
 };
 
 export default function PrivacyPage() {
@@ -13,7 +16,7 @@ export default function PrivacyPage() {
       <PageHeader
         label="Legal"
         title="Privacy Policy"
-        description="Last updated: December 2024"
+        description="Last updated: March 2026. Verluna is committed to protecting your privacy in compliance with the EU General Data Protection Regulation (GDPR)."
       />
       <PrivacyContent />
     </>
@@ -24,225 +27,281 @@ function PrivacyContent() {
   return (
     <div className="pb-24">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div className="prose prose-invert prose-steel max-w-none">
-          <Section title="1. Introduction">
+        <div className="space-y-0">
+          <Section title="1. Controller">
             <p>
-              Verluna (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your
-              privacy. This Privacy Policy explains how we collect, use,
-              disclose, and safeguard your information when you visit our
-              website verluna.com or engage with our services.
+              The controller responsible for data processing on this website is:
             </p>
-            <p>
-              By using our website or services, you consent to the data
-              practices described in this policy. If you do not agree with the
-              terms of this policy, please do not access the site.
-            </p>
+            <div className="mt-4 p-4 rounded-lg border border-surface-border bg-surface/30 font-mono text-sm">
+              <p className="text-off-white">Verluna</p>
+              <p className="text-steel-grey">Tolga Oral</p>
+              <p className="text-steel-grey">Berlin, Germany</p>
+              <p className="text-steel-grey">
+                Email:{" "}
+                <a
+                  href="mailto:hello@verluna.com"
+                  className="text-terminal-green hover:underline"
+                >
+                  hello@verluna.com
+                </a>
+              </p>
+            </div>
           </Section>
 
-          <Section title="2. Information We Collect">
-            <h4>Information You Provide</h4>
+          <Section title="2. Data We Collect">
+            <h4>Data You Provide Voluntarily</h4>
             <ul>
               <li>
-                <strong>Contact Information:</strong> Name, email address,
-                company name when you fill out our contact form or book a call.
+                <strong>Contact information:</strong> Name, email address,
+                company name when you submit a contact form, book a call, or
+                subscribe to the newsletter.
               </li>
               <li>
-                <strong>Communication Data:</strong> Messages, inquiries, and
-                feedback you send us.
+                <strong>Communication data:</strong> Messages, inquiries, and
+                feedback you send us through the contact form or email.
               </li>
               <li>
-                <strong>Business Information:</strong> Details about your
-                company, tech stack, and project requirements shared during
+                <strong>Assessment data:</strong> Responses to the Agent
+                Readiness Scorecard, including company size and current CRM.
+              </li>
+              <li>
+                <strong>Business information:</strong> Details about your company,
+                tech stack, and operational challenges shared during
                 consultations.
               </li>
             </ul>
 
-            <h4>Information Collected Automatically</h4>
+            <h4>Data Collected Automatically</h4>
             <ul>
               <li>
-                <strong>Usage Data:</strong> Pages visited, time spent on pages,
-                referring URLs, and navigation paths.
+                <strong>Usage data:</strong> Pages visited, time spent on pages,
+                referring URLs, and navigation paths. Collected via Plausible
+                Analytics (privacy-focused, no cookies, EU-hosted).
               </li>
               <li>
-                <strong>Device Information:</strong> Browser type, operating
+                <strong>Device information:</strong> Browser type, operating
                 system, device type, and screen resolution.
               </li>
               <li>
-                <strong>IP Address:</strong> Used for analytics and security
-                purposes.
+                <strong>IP address:</strong> Anonymized and used for analytics
+                and security purposes only.
               </li>
             </ul>
           </Section>
 
-          <Section title="3. How We Use Your Information">
-            <p>We use the information we collect to:</p>
+          <Section title="3. Purpose and Legal Basis">
+            <p>We process your data for the following purposes:</p>
             <ul>
-              <li>Respond to your inquiries and provide requested services</li>
-              <li>Send you relevant information about our services</li>
-              <li>Improve our website and user experience</li>
-              <li>Analyze usage patterns and optimize performance</li>
-              <li>Comply with legal obligations</li>
-              <li>Protect against fraudulent or unauthorized activity</li>
+              <li>
+                <strong>Contract performance (Art. 6(1)(b) GDPR):</strong>{" "}
+                Responding to inquiries, providing services, and fulfilling
+                contractual obligations.
+              </li>
+              <li>
+                <strong>Consent (Art. 6(1)(a) GDPR):</strong> Sending newsletter
+                communications (double opt-in required). You may withdraw consent
+                at any time.
+              </li>
+              <li>
+                <strong>Legitimate interest (Art. 6(1)(f) GDPR):</strong> Website
+                analytics for improving user experience, security measures, and
+                fraud prevention.
+              </li>
             </ul>
           </Section>
 
           <Section title="4. Cookies and Tracking">
             <p>
-              We use cookies and similar tracking technologies to enhance your
-              experience. These include:
+              We use Plausible Analytics, a privacy-focused analytics tool that
+              does not use cookies and does not collect personal data. Plausible
+              is hosted in the EU and is fully GDPR compliant without requiring
+              cookie consent.
             </p>
-            <ul>
-              <li>
-                <strong>Essential Cookies:</strong> Required for basic site
-                functionality.
-              </li>
-              <li>
-                <strong>Analytics Cookies:</strong> Help us understand how
-                visitors interact with our site.
-              </li>
-              <li>
-                <strong>Preference Cookies:</strong> Remember your settings and
-                preferences.
-              </li>
-            </ul>
             <p>
-              You can control cookies through your browser settings. Disabling
-              certain cookies may affect site functionality.
+              If we implement additional tracking tools in the future, we will
+              obtain your explicit consent before any non-essential cookies are
+              set, in compliance with the ePrivacy Directive and German
+              Telemediengesetz (TDDDG).
             </p>
           </Section>
 
-          <Section title="5. Third-Party Services">
+          <Section title="5. Third-Party Processors">
             <p>
-              We may share information with third-party service providers who
-              assist us in operating our website and conducting our business:
+              We share data with the following processors, all of which have
+              signed Data Processing Agreements (DPAs):
             </p>
             <ul>
               <li>
-                <strong>Analytics:</strong> Google Analytics, Plausible, or
-                similar services for website analytics.
+                <strong>HubSpot (EU data residency):</strong> CRM and email
+                marketing. Stores contact information, scorecard results, and
+                engagement data.
               </li>
               <li>
-                <strong>Email:</strong> Resend or similar services for email
-                delivery.
+                <strong>Plausible Analytics (EU-hosted):</strong> Website
+                analytics. No personal data collected. No cookies.
               </li>
               <li>
-                <strong>Scheduling:</strong> Calendly or similar services for
-                booking appointments.
+                <strong>Resend (email delivery):</strong> Transactional email
+                delivery for contact form confirmations and newsletter
+                distribution.
+              </li>
+              <li>
+                <strong>Calendly / Cal.com:</strong> Appointment scheduling.
+                Collects name, email, and appointment details when you book a
+                call.
+              </li>
+              <li>
+                <strong>Vercel (hosting):</strong> Website hosting and content
+                delivery. Processes server logs including anonymized IP addresses.
               </li>
             </ul>
-            <p>
-              These providers have their own privacy policies governing the use
-              of your information.
-            </p>
           </Section>
 
           <Section title="6. Data Retention">
             <p>
-              We retain your personal information only as long as necessary to
-              fulfill the purposes outlined in this policy, unless a longer
-              retention period is required by law. Contact form submissions are
-              retained for up to 2 years unless you request deletion.
-            </p>
-          </Section>
-
-          <Section title="7. Your Rights (GDPR)">
-            <p>
-              If you are a resident of the European Economic Area (EEA), you
-              have certain data protection rights:
+              We retain your personal data only as long as necessary for the
+              purposes described in this policy:
             </p>
             <ul>
               <li>
-                <strong>Access:</strong> Request a copy of your personal data.
+                <strong>Contact form submissions:</strong> 36 months, unless you
+                request earlier deletion.
               </li>
               <li>
-                <strong>Rectification:</strong> Request correction of inaccurate
-                data.
+                <strong>Newsletter subscribers:</strong> Until you unsubscribe.
               </li>
               <li>
-                <strong>Erasure:</strong> Request deletion of your personal
-                data.
+                <strong>Scorecard results:</strong> 36 months.
               </li>
               <li>
-                <strong>Restriction:</strong> Request restriction of processing.
+                <strong>Client engagement data:</strong> Duration of the
+                engagement plus 36 months for follow-up.
               </li>
               <li>
-                <strong>Portability:</strong> Request transfer of your data.
+                <strong>Analytics data:</strong> Plausible retains anonymized,
+                aggregated data only. No personal data is stored.
+              </li>
+            </ul>
+          </Section>
+
+          <Section title="7. Your Rights Under GDPR">
+            <p>
+              As a data subject in the European Economic Area, you have the
+              following rights:
+            </p>
+            <ul>
+              <li>
+                <strong>Right of access (Art. 15):</strong> Request a copy of
+                your personal data.
               </li>
               <li>
-                <strong>Objection:</strong> Object to processing of your data.
+                <strong>Right to rectification (Art. 16):</strong> Request
+                correction of inaccurate data.
+              </li>
+              <li>
+                <strong>Right to erasure (Art. 17):</strong> Request deletion of
+                your personal data (&quot;right to be forgotten&quot;).
+              </li>
+              <li>
+                <strong>Right to restrict processing (Art. 18):</strong> Request
+                limitation of data processing.
+              </li>
+              <li>
+                <strong>Right to data portability (Art. 20):</strong> Receive
+                your data in a structured, machine-readable format.
+              </li>
+              <li>
+                <strong>Right to object (Art. 21):</strong> Object to processing
+                based on legitimate interest.
+              </li>
+              <li>
+                <strong>Right to withdraw consent (Art. 7(3)):</strong> Withdraw
+                consent for newsletter or marketing communications at any time.
               </li>
             </ul>
             <p>
-              To exercise these rights, contact us at{" "}
+              To exercise any of these rights, contact us at{" "}
               <a
-                href="mailto:info@verluna.de"
+                href="mailto:hello@verluna.com"
                 className="text-terminal-green hover:underline"
               >
-                info@verluna.de
+                hello@verluna.com
               </a>
-              .
+              . We will respond within 30 days.
+            </p>
+            <p>
+              You also have the right to lodge a complaint with the Berlin
+              Commissioner for Data Protection and Freedom of Information
+              (Berliner Beauftragte fur Datenschutz und Informationsfreiheit).
             </p>
           </Section>
 
           <Section title="8. Data Security">
             <p>
               We implement appropriate technical and organizational measures to
-              protect your personal information, including:
+              protect your personal data:
             </p>
             <ul>
-              <li>Encrypted data transmission (HTTPS)</li>
-              <li>Secure hosting infrastructure</li>
-              <li>Limited access to personal data</li>
-              <li>Regular security assessments</li>
+              <li>TLS/HTTPS encryption for all data in transit</li>
+              <li>Encrypted storage for data at rest</li>
+              <li>Access controls limiting data access to authorized personnel</li>
+              <li>Regular security assessments of third-party processors</li>
+              <li>EU-based hosting and data processing where possible</li>
             </ul>
-            <p>
-              However, no method of transmission over the Internet is 100%
-              secure. We cannot guarantee absolute security.
-            </p>
           </Section>
 
           <Section title="9. International Transfers">
             <p>
-              We are based in Berlin, Germany. If you access our website from
-              outside Germany, your information may be transferred to, stored,
-              and processed in Germany or other countries where our service
-              providers operate. We ensure appropriate safeguards are in place
-              for such transfers.
+              We prioritize EU-based data processing. Where data is transferred
+              outside the EEA (for example, certain Vercel CDN nodes), we ensure
+              appropriate safeguards are in place, including Standard Contractual
+              Clauses (SCCs) as approved by the European Commission.
             </p>
           </Section>
 
-          <Section title="10. Children's Privacy">
+          <Section title="10. Newsletter (Double Opt-In)">
             <p>
-              Our services are not intended for individuals under 18 years of
-              age. We do not knowingly collect personal information from
-              children. If you believe we have collected information from a
-              child, please contact us immediately.
+              Newsletter subscriptions require double opt-in in compliance with
+              German unfair competition law (UWG). After entering your email, you
+              will receive a confirmation email. Your subscription is only active
+              after you click the confirmation link. Every newsletter includes an
+              unsubscribe link.
             </p>
           </Section>
 
-          <Section title="11. Changes to This Policy">
+          <Section title="11. Children">
+            <p>
+              Our services are directed at businesses and professionals. We do
+              not knowingly collect data from individuals under 16. If you
+              believe we have collected data from a minor, please contact us
+              immediately.
+            </p>
+          </Section>
+
+          <Section title="12. Changes to This Policy">
             <p>
               We may update this Privacy Policy from time to time. Changes will
-              be posted on this page with an updated &quot;Last updated&quot; date. We
-              encourage you to review this policy periodically.
+              be posted on this page with an updated date. For material changes,
+              we will notify newsletter subscribers via email.
             </p>
           </Section>
 
-          <Section title="12. Contact Us">
+          <Section title="13. Contact">
             <p>
-              If you have questions or concerns about this Privacy Policy or our
-              data practices, please contact us:
+              For privacy-related inquiries, data subject requests, or
+              complaints:
             </p>
             <div className="mt-4 p-4 rounded-lg border border-surface-border bg-surface/30 font-mono text-sm">
-              <p className="text-off-white">Verluna</p>
+              <p className="text-off-white">Verluna — Data Protection</p>
+              <p className="text-steel-grey">Tolga Oral</p>
               <p className="text-steel-grey">Berlin, Germany</p>
               <p className="text-steel-grey">
                 Email:{" "}
                 <a
-                  href="mailto:info@verluna.de"
+                  href="mailto:hello@verluna.com"
                   className="text-terminal-green hover:underline"
                 >
-                  info@verluna.de
+                  hello@verluna.com
                 </a>
               </p>
             </div>

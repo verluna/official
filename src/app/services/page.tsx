@@ -1,22 +1,26 @@
 import { Metadata } from "next";
-import { PageHeader, BentoCard, Button, Badge } from "@/components/ui";
-import { ServicesContent } from "./ServicesContent";
+import { ServicesOverviewContent } from "./ServicesOverviewContent";
 
 export const metadata: Metadata = {
-  title: "Services | Verluna - GTM Engineering",
+  title: "Services | Verluna — Agent Operations for European Enterprises",
   description:
-    "Explore our three tracks: GTM Audit, Autonomous Ops, and Custom AI Agents. We engineer revenue infrastructure that runs itself.",
+    "Four ways to operationalize your agents. From a two-week diagnostic to ongoing managed operations. Audit, Build, Managed, or Architecture Consulting.",
+  keywords: [
+    "agent operations consulting",
+    "GTM automation audit",
+    "AI agent consulting Europe",
+    "marketing operations automation DACH",
+    "managed marketing operations",
+    "agent architecture consulting",
+  ],
+  openGraph: {
+    title: "Services | Verluna — Agent Operations",
+    description:
+      "Four ways to operationalize your agents. Audit, Build, Managed, or Architecture Consulting. EUR pricing. European enterprises.",
+    url: "https://verluna.com/services",
+  },
 };
 
 export default function ServicesPage() {
-  return (
-    <>
-      <PageHeader
-        label="Services"
-        title="Engineering Your Revenue Infrastructure"
-        description="We offer three distinct tracks designed to meet you where you are and take you where you need to go. Whether you need a diagnostic, automation, or AI augmentation — we build systems that scale."
-      />
-      <ServicesContent />
-    </>
-  );
+  return <ServicesOverviewContent />;
 }

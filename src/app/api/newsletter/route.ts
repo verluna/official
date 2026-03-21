@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Generate confirmation token and send email
     const token = await createNewsletterToken(email);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://verluna.com";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://verluna.de";
     const confirmUrl = `${baseUrl}/api/newsletter/confirm?token=${token}`;
 
     await sendNewsletterConfirmation(email, confirmUrl);

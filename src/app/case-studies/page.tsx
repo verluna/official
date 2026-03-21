@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   alternates: {
-    canonical: "https://verluna.com/case-studies",
+    canonical: "https://verluna.de/case-studies",
   },
 };
 

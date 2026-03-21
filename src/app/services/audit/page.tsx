@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "Agent Readiness Audit | Verluna",
     description:
       "Two-week diagnostic. Architecture diagram. Automation maturity scorecard. 3 prioritized opportunities with ROI. EUR 5,000-10,000.",
-    url: "https://verluna.com/services/audit",
+    url: "https://verluna.de/services/audit",
   },
 };
 

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "The Verluna Method | Six Phases to AI-Native Operations",
     description:
       "Take any human-operated process, decompose it into domains, design an AI-native operating layer, and build it so it runs autonomously. The methodology behind Verluna.",
-    url: "https://verluna.com/methodology",
+    url: "https://verluna.de/methodology",
   },
 };
 

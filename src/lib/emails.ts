@@ -236,7 +236,7 @@ export async function sendScorecardNotification(
       </table>
 
       <hr style="border: none; border-top: 1px solid #262626; margin: 24px 0;">
-      <p style="color: #A1A1AA; font-size: 12px;">Sent from verluna.com scorecard</p>
+      <p style="color: #A1A1AA; font-size: 12px;">Sent from verluna.de scorecard</p>
     </div>
   `;
 

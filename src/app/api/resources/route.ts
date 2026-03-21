@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
           </div>
 
           <p style="color: #A1A1AA; line-height: 1.6;">
-            Want a personalized walkthrough? <a href="https://verluna.com/contact" style="color: #3B82F6;">Book a free audit call</a> and we will review your GTM stack together.
+            Want a personalized walkthrough? <a href="https://verluna.de/contact" style="color: #3B82F6;">Book a free audit call</a> and we will review your GTM stack together.
           </p>
 
           <hr style="border: none; border-top: 1px solid #262626; margin: 24px 0;">
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
           <hr style="border: none; border-top: 1px solid #262626; margin: 24px 0;">
 
           <p style="color: #A1A1AA; font-size: 12px;">
-            Sent from verluna.com resources page
+            Sent from verluna.de resources page
           </p>
         </div>
       `,

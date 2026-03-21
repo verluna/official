@@ -33,12 +33,12 @@ export const metadata: Metadata = {
     "Autonomous Systems",
   ],
   authors: [{ name: "Verluna" }],
-  metadataBase: new URL("https://verluna.com"),
+  metadataBase: new URL("https://verluna.de"),
   openGraph: {
     title: "Verluna — Agent Operations for European Enterprises",
     description:
       "We design, build, and run the operating layer between AI agents and your business. Working systems, not strategy decks.",
-    url: "https://verluna.com",
+    url: "https://verluna.de",
     siteName: "Verluna",
     images: [
       {
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://verluna.com",
+    canonical: "https://verluna.de",
   },
 };
 
@@ -79,11 +79,11 @@ const organizationSchemaJson = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Verluna",
-  url: "https://verluna.com",
-  logo: "https://verluna.com/verluna-logo.svg",
+  url: "https://verluna.de",
+  logo: "https://verluna.de/verluna-logo.svg",
   description:
     "Verluna designs, builds, and runs agent operations for B2B enterprises across DACH and the EU. Six-phase methodology. Production deployments. Working systems, not strategy decks.",
-  email: "hello@verluna.com",
+  email: "hello@verluna.de",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Berlin",

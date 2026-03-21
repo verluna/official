@@ -183,10 +183,10 @@ export function ContactContent() {
                 <div>
                   <p className="text-sm text-steel-grey">Email directly</p>
                   <a
-                    href="mailto:hello@verluna.com"
+                    href="mailto:hello@verluna.de"
                     className="text-off-white hover:text-terminal-green transition-colors"
                   >
-                    hello@verluna.com
+                    hello@verluna.de
                   </a>
                 </div>
               </BentoCard>

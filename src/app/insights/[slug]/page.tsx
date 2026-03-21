@@ -76,11 +76,11 @@ export default async function BlogPostPage({ params }: Props) {
     publisher: {
       "@type": "Organization",
       name: "Verluna",
-      url: "https://verluna.com",
+      url: "https://verluna.de",
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://verluna.com/insights/${slug}`,
+      "@id": `https://verluna.de/insights/${slug}`,
     },
   };
 

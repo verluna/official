@@ -206,7 +206,7 @@ export function ResultsView({
           Share:
         </span>
         <a
-          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://verluna.com/scorecard")}&title=${encodeURIComponent(`I scored ${score}/100 on the Agent Readiness Scorecard`)}`}
+          href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://verluna.de/scorecard")}&title=${encodeURIComponent(`I scored ${score}/100 on the Agent Readiness Scorecard`)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="px-3 py-1.5 text-xs font-mono border border-surface-border rounded hover:border-signal-blue/50 hover:text-signal-blue text-steel-grey transition-all"
@@ -214,7 +214,7 @@ export function ResultsView({
           LinkedIn
         </a>
         <a
-          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I scored ${score}/100 on the Agent Readiness Scorecard by @verluna_de. How ready is your team for AI agents?`)}&url=${encodeURIComponent("https://verluna.com/scorecard")}`}
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I scored ${score}/100 on the Agent Readiness Scorecard by @verluna_de. How ready is your team for AI agents?`)}&url=${encodeURIComponent("https://verluna.de/scorecard")}`}
           target="_blank"
           rel="noopener noreferrer"
           className="px-3 py-1.5 text-xs font-mono border border-surface-border rounded hover:border-steel-grey/50 hover:text-off-white text-steel-grey transition-all"

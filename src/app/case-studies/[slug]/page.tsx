@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
     },
     alternates: {
-      canonical: `https://verluna.com/case-studies/${slug}`,
+      canonical: `https://verluna.de/case-studies/${slug}`,
     },
   };
 }

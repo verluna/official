@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 
           <hr style="border: none; border-top: 1px solid #262626; margin: 24px 0;">
           <p style="color: #A1A1AA; font-size: 12px;">
-            Sent from verluna.com contact form${source ? ` (${source})` : ""}
+            Sent from verluna.de contact form${source ? ` (${source})` : ""}
           </p>
         </div>
       `,
@@ -115,9 +115,9 @@ export async function POST(request: NextRequest) {
             </p>
 
             <ul style="color: #EDEDED; line-height: 1.8;">
-              <li>Take the <a href="https://verluna.com/scorecard" style="color: #3B82F6;">Agent Readiness Scorecard</a></li>
-              <li>Read our <a href="https://verluna.com/case-studies" style="color: #3B82F6;">case studies</a></li>
-              <li>Learn about our <a href="https://verluna.com/services" style="color: #3B82F6;">services</a></li>
+              <li>Take the <a href="https://verluna.de/scorecard" style="color: #3B82F6;">Agent Readiness Scorecard</a></li>
+              <li>Read our <a href="https://verluna.de/case-studies" style="color: #3B82F6;">case studies</a></li>
+              <li>Learn about our <a href="https://verluna.de/services" style="color: #3B82F6;">services</a></li>
             </ul>
 
             <hr style="border: none; border-top: 1px solid #262626; margin: 24px 0;">

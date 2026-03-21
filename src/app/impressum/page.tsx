@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Impressum | Verluna",
   description: "Legal notice (Impressum) for Verluna, Berlin, Germany. Required under German Telemediengesetz (TMG).",
   alternates: {
-    canonical: "https://verluna.com/impressum",
+    canonical: "https://verluna.de/impressum",
   },
 };
 
@@ -39,19 +39,19 @@ export default function ImpressumPage() {
                 <li>
                   <strong>E-Mail:</strong>{" "}
                   <a
-                    href="mailto:hello@verluna.com"
+                    href="mailto:hello@verluna.de"
                     className="text-terminal-green hover:underline"
                   >
-                    hello@verluna.com
+                    hello@verluna.de
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://verluna.com"
+                    href="https://verluna.de"
                     className="text-terminal-green hover:underline"
                   >
-                    verluna.com
+                    verluna.de
                   </a>
                 </li>
               </ul>

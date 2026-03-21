@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "Agent Architecture Build | Verluna",
     description:
       "4-8 weeks to production. Working automations, tested integrations, documented architecture. EUR 15,000-50,000.",
-    url: "https://verluna.com/services/build",
+    url: "https://verluna.de/services/build",
   },
 };
 

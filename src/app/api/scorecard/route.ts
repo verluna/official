@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       tier: result.tier,
     });
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://verluna.com";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://verluna.de";
     const reportUrl = `${baseUrl}/api/scorecard/report?token=${token}`;
 
     // Fire-and-forget: HubSpot, emails, notification

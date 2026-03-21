@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "Managed Agent Operations | Verluna",
     description:
       "One architect with an AI agent workforce delivers the throughput of a 3-5 person team. From EUR 5,000/month.",
-    url: "https://verluna.com/services/managed",
+    url: "https://verluna.de/services/managed",
   },
 };
 

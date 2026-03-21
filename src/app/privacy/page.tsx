@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "How Verluna collects, uses, and protects your personal information. GDPR compliant. Berlin, Germany jurisdiction.",
   alternates: {
-    canonical: "https://verluna.com/privacy",
+    canonical: "https://verluna.de/privacy",
   },
 };
 
@@ -39,10 +39,10 @@ function PrivacyContent() {
               <p className="text-steel-grey">
                 Email:{" "}
                 <a
-                  href="mailto:hello@verluna.com"
+                  href="mailto:hello@verluna.de"
                   className="text-terminal-green hover:underline"
                 >
-                  hello@verluna.com
+                  hello@verluna.de
                 </a>
               </p>
             </div>
@@ -222,10 +222,10 @@ function PrivacyContent() {
             <p>
               To exercise any of these rights, contact us at{" "}
               <a
-                href="mailto:hello@verluna.com"
+                href="mailto:hello@verluna.de"
                 className="text-terminal-green hover:underline"
               >
-                hello@verluna.com
+                hello@verluna.de
               </a>
               . We will respond within 30 days.
             </p>
@@ -298,10 +298,10 @@ function PrivacyContent() {
               <p className="text-steel-grey">
                 Email:{" "}
                 <a
-                  href="mailto:hello@verluna.com"
+                  href="mailto:hello@verluna.de"
                   className="text-terminal-green hover:underline"
                 >
-                  hello@verluna.com
+                  hello@verluna.de
                 </a>
               </p>
             </div>

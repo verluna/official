@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Services | Verluna — Agent Operations",
     description:
       "Four ways to operationalize your agents. Audit, Build, Managed, or Architecture Consulting. EUR pricing. European enterprises.",
-    url: "https://verluna.com/services",
+    url: "https://verluna.de/services",
   },
 };
 

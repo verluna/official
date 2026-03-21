@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "Agent Architecture Consulting | Verluna",
     description:
       "Not a vendor. A practitioner. Architectural guidance for companies building internal agent systems.",
-    url: "https://verluna.com/services/consulting",
+    url: "https://verluna.de/services/consulting",
   },
 };
 

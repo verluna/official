@@ -3,13 +3,11 @@ import { notFound } from "next/navigation";
 import { getPostBySlug, getAllPosts, getRelatedPosts } from "@/lib/blog/posts";
 import { compileBlogMDX } from "@/lib/blog/mdx";
 import {
-  BlogHeader,
-  BlogContent,
-  RelatedPosts,
-  AuthorCard,
-  ArticleDiagram,
-} from "@/components/blog";
-import { getDiagramForSlug } from "@/data/articleDiagrams";
+  ArticleBody,
+  ArticleHeader,
+  AuthorNote,
+  RelatedReading,
+} from "@/components/insights";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -61,7 +59,6 @@ export default async function BlogPostPage({ params }: Props) {
 
   const { content } = await compileBlogMDX(post.content);
   const relatedPosts = getRelatedPosts(slug, post.category, post.tags);
-  const diagramConfig = getDiagramForSlug(slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -91,31 +88,20 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <BlogHeader post={post} />
+      <ArticleHeader post={post} />
 
-      {/* Article Architecture Diagram */}
-      {diagramConfig && (
-        <section className="py-8 sm:py-12">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <ArticleDiagram config={diagramConfig} />
-          </div>
-        </section>
-      )}
-
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-24">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pb-24">
         <article>
-          <BlogContent>{content}</BlogContent>
+          <ArticleBody>{content}</ArticleBody>
         </article>
 
-        {/* Author card */}
-        <div className="mt-16 pt-8 border-t border-surface-border">
-          <AuthorCard authorId={post.author} />
+        <div className="mt-16 border-t border-line pt-10">
+          <AuthorNote authorId={post.author} />
         </div>
 
-        {/* Related posts */}
         {relatedPosts.length > 0 && (
-          <div className="mt-24">
-            <RelatedPosts posts={relatedPosts} />
+          <div className="mt-20">
+            <RelatedReading posts={relatedPosts} />
           </div>
         )}
       </div>

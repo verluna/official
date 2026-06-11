@@ -4,10 +4,14 @@ import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { QUESTIONS } from "@/lib/scorecard-data";
 import type { ScorecardAnswers } from "@/lib/scorecard-data";
-import { ProgressBar } from "@/components/scorecard/ProgressBar";
-import { QuestionCard } from "@/components/scorecard/QuestionCard";
-import { EmailGate, type EmailGateData } from "@/components/scorecard/EmailGate";
-import { ResultsView } from "@/components/scorecard/ResultsView";
+import { ScorecardProgress } from "@/components/convert/ScorecardProgress";
+import { ScorecardQuestion } from "@/components/convert/ScorecardQuestion";
+import {
+  ScorecardGate,
+  type ScorecardGateData,
+} from "@/components/convert/ScorecardGate";
+import { ScorecardResults } from "@/components/convert/ScorecardResults";
+import { FormAlert } from "@/components/convert/forms";
 import { cn } from "@/lib/utils";
 
 type Phase = "intro" | "questions" | "email-gate" | "results";
@@ -69,7 +73,7 @@ export default function ScorecardPage() {
 
   // Submit scorecard
   const handleEmailSubmit = useCallback(
-    async (data: EmailGateData) => {
+    async (data: ScorecardGateData) => {
       setIsSubmitting(true);
       setError(null);
 
@@ -113,7 +117,10 @@ export default function ScorecardPage() {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "ArrowLeft" || e.key === "Backspace") {
         handleBack();
+        return;
       }
+      // Only single-character keys select options
+      if (e.key.length !== 1) return;
       // A, B, C, D keys select options
       const idx = e.key.toLowerCase().charCodeAt(0) - 97;
       if (idx >= 0 && idx < (question?.options.length ?? 0)) {
@@ -131,7 +138,7 @@ export default function ScorecardPage() {
   }, [phase, question, handleSelect, handleBack]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 sm:py-24">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 sm:py-24">
       <div className="w-full max-w-xl">
         <AnimatePresence mode="wait">
           {/* ---- INTRO ---- */}
@@ -142,53 +149,30 @@ export default function ScorecardPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="text-center"
             >
-              {/* Terminal header */}
-              <div className="font-mono text-xs text-steel-grey mb-8">
-                <span className="text-terminal-green">$</span> verluna
-                agent-readiness --assess
-              </div>
-
-              <h1 className="text-3xl sm:text-4xl font-bold text-off-white mb-4 leading-tight">
-                Agent Readiness
-                <br />
-                Scorecard
+              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tighter text-text">
+                Agent readiness scorecard
               </h1>
 
-              <p className="text-steel-grey text-base leading-relaxed mb-3 max-w-md mx-auto">
-                How ready is your organization for AI-powered agent operations?
-                12 questions. 3 minutes. Detailed report with actionable
-                recommendations.
+              <p className="mt-5 max-w-md text-base leading-relaxed text-text-muted">
+                How ready is your organization for agent operations? You get a
+                score, a category breakdown, and recommendations you can act
+                on.
               </p>
 
-              <div className="flex items-center justify-center gap-6 mb-10">
-                <div className="flex items-center gap-2 text-xs font-mono text-steel-grey">
-                  <span className="w-2 h-2 rounded-full bg-terminal-green" />
-                  12 Questions
-                </div>
-                <div className="flex items-center gap-2 text-xs font-mono text-steel-grey">
-                  <span className="w-2 h-2 rounded-full bg-signal-blue" />
-                  3 Minutes
-                </div>
-                <div className="flex items-center gap-2 text-xs font-mono text-steel-grey">
-                  <span className="w-2 h-2 rounded-full bg-electric-purple" />
-                  Free Report
-                </div>
-              </div>
+              <p className="mt-4 text-sm text-text-muted">
+                12 questions. 3 minutes. Free report.
+              </p>
 
-              <motion.button
+              <button
                 onClick={() => setPhase("questions")}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center justify-center px-8 py-4 bg-off-white text-void font-semibold text-base rounded-lg hover:bg-terminal-green transition-colors"
+                className="mt-10 inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-text px-6 py-3 text-base font-medium tracking-tight text-ink transition-[background-color,transform] duration-200 hover:bg-white active:translate-y-px active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               >
-                Start Assessment
-                <span className="ml-2 text-lg">&rarr;</span>
-              </motion.button>
+                Start the assessment
+              </button>
 
-              <p className="mt-6 text-xs text-steel-grey/60 font-mono">
-                No credit card. No sales pitch. Just data.
+              <p className="mt-6 text-sm text-text-muted">
+                No credit card. No sales pitch.
               </p>
             </motion.div>
           )}
@@ -202,9 +186,12 @@ export default function ScorecardPage() {
               exit={{ opacity: 0 }}
               className="space-y-8"
             >
-              <ProgressBar current={currentQuestion} total={totalQuestions} />
+              <ScorecardProgress
+                current={currentQuestion}
+                total={totalQuestions}
+              />
 
-              <QuestionCard
+              <ScorecardQuestion
                 question={question}
                 selectedValue={answers[question.id] ?? null}
                 onSelect={handleSelect}
@@ -217,16 +204,17 @@ export default function ScorecardPage() {
                   onClick={handleBack}
                   disabled={currentQuestion === 0}
                   className={cn(
-                    "font-mono text-xs px-3 py-1.5 rounded border border-surface-border transition-all",
+                    "rounded-md border border-line px-3 py-1.5 text-xs transition-colors",
+                    "focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2",
                     currentQuestion === 0
-                      ? "text-steel-grey/30 cursor-not-allowed"
-                      : "text-steel-grey hover:text-off-white hover:border-steel-grey/50"
+                      ? "cursor-not-allowed text-text-faint"
+                      : "text-text-muted hover:border-line-strong hover:text-text"
                   )}
                 >
-                  &larr; Back
+                  Back
                 </button>
-                <span className="font-mono text-xs text-steel-grey/40">
-                  Press A-D or 1-4 to select
+                <span className="text-xs text-text-muted">
+                  Press A to D or 1 to 4 to select
                 </span>
               </div>
             </motion.div>
@@ -241,25 +229,24 @@ export default function ScorecardPage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-              <EmailGate onSubmit={handleEmailSubmit} isLoading={isSubmitting} />
+              <ScorecardGate
+                onSubmit={handleEmailSubmit}
+                isLoading={isSubmitting}
+              />
               {error && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-4 text-center text-sm text-error-red font-mono"
-                >
-                  {error}
-                </motion.p>
+                <div className="mt-4">
+                  <FormAlert>{error}</FormAlert>
+                </div>
               )}
-              <div className="mt-6 text-center">
+              <div className="mt-6">
                 <button
                   onClick={() => {
                     setPhase("questions");
                     setCurrentQuestion(totalQuestions - 1);
                   }}
-                  className="font-mono text-xs text-steel-grey hover:text-off-white transition-colors"
+                  className="text-sm text-text-muted transition-colors hover:text-text"
                 >
-                  &larr; Back to questions
+                  Back to questions
                 </button>
               </div>
             </motion.div>
@@ -274,7 +261,7 @@ export default function ScorecardPage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-              <ResultsView
+              <ScorecardResults
                 score={result.score}
                 tier={result.tier}
                 tierLabel={result.tierLabel}

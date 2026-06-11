@@ -1,4 +1,4 @@
-// Case studies copy — StoryBrand SB7 aligned
+// Case studies copy: StoryBrand SB7 aligned
 // Migrated from WorkContent.tsx with enhanced SB7 narratives.
 // Customer is the hero. Problem/solution/results told as transformation stories.
 

@@ -292,7 +292,7 @@ function PrivacyContent() {
               complaints:
             </p>
             <div className="mt-4 p-4 rounded-lg border border-surface-border bg-surface/30 font-mono text-sm">
-              <p className="text-off-white">Verluna — Data Protection</p>
+              <p className="text-off-white">Verluna Data Protection</p>
               <p className="text-steel-grey">Tolga Oral</p>
               <p className="text-steel-grey">Berlin, Germany</p>
               <p className="text-steel-grey">

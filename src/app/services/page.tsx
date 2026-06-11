@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { ServicesOverviewContent } from "./ServicesOverviewContent";
 
 export const metadata: Metadata = {
-  title: "Services | Verluna — Agent Operations for European Enterprises",
+  title: "Services | Verluna, Agent Operations for European Companies",
   description:
-    "Four ways to operationalize your agents. From a two-week diagnostic to ongoing managed operations. Audit, Build, Managed, or Architecture Consulting.",
+    "Three engagements: Readiness Audit (EUR 7-10K, 2-3 weeks), System Build (EUR 20-60K, fixed scope), and Managed Agent Operations (EUR 8-15K/month). Plus architecture advisory for in-house teams.",
   keywords: [
     "agent operations consulting",
     "GTM automation audit",
@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     "agent architecture consulting",
   ],
   openGraph: {
-    title: "Services | Verluna — Agent Operations",
+    title: "Services | Verluna, Agent Operations",
     description:
-      "Four ways to operationalize your agents. Audit, Build, Managed, or Architecture Consulting. EUR pricing. European enterprises.",
+      "Readiness Audit, System Build, and Managed Agent Operations. Fixed prices in EUR. Built for European companies adapting to the agentic era.",
     url: "https://verluna.de/services",
   },
 };

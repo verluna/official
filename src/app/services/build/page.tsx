@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { BuildContent } from "./BuildContent";
 
 export const metadata: Metadata = {
-  title: "Agent Architecture Build | Verluna — Working Systems in 8 Weeks",
+  title: "System Build | Verluna, One Agent System Built to Production",
   description:
-    "We build production agent systems in 4-8 weeks. Working automations, tested integrations, documented architecture, trained team. EUR 15,000-50,000.",
+    "Fixed-scope builds of production agent systems: integrated with your stack, observable from day one, documented and handed over. EUR 20-60K, priced before work begins.",
   keywords: [
     "agentic AI implementation",
     "marketing automation build",
@@ -13,9 +13,9 @@ export const metadata: Metadata = {
     "production AI systems Europe",
   ],
   openGraph: {
-    title: "Agent Architecture Build | Verluna",
+    title: "System Build | Verluna",
     description:
-      "4-8 weeks to production. Working automations, tested integrations, documented architecture. EUR 15,000-50,000.",
+      "One agent system designed, built, and deployed to production. Fixed scope, fixed price. EUR 20-60K.",
     url: "https://verluna.de/services/build",
   },
 };

@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { ConsultingContent } from "./ConsultingContent";
 
 export const metadata: Metadata = {
-  title: "Agent Architecture Consulting | Verluna — For CTOs Building Agent Capabilities",
+  title: "Architecture Advisory | Verluna, Guidance for In-House Agent Teams",
   description:
-    "Strategic advisory for companies building their own agent capabilities. Domain decomposition, governance frameworks, autonomy classification, infrastructure blueprints, and team training.",
+    "Advisory for companies building agent systems with their own engineers. Domain decomposition, governance for the EU AI Act, autonomy classification, platform selection, and team training.",
   keywords: [
     "agent architecture consulting",
     "AI governance framework",
@@ -13,9 +13,9 @@ export const metadata: Metadata = {
     "agent strategy CTO",
   ],
   openGraph: {
-    title: "Agent Architecture Consulting | Verluna",
+    title: "Architecture Advisory | Verluna",
     description:
-      "Not a vendor. A practitioner. Architectural guidance for companies building internal agent systems.",
+      "Your engineers build. We guide the architecture. Workshops, reviews, training, and standing advisory, scoped per engagement.",
     url: "https://verluna.de/services/consulting",
   },
 };

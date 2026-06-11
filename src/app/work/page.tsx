@@ -1,22 +1,35 @@
 import { Metadata } from "next";
-import { PageHeader } from "@/components/ui";
-import { WorkContent } from "./WorkContent";
+import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-  title: "Our Work | Verluna - Case Studies & Build Logs",
+  title: "Work | Verluna",
   description:
-    "Browse our portfolio of GTM engineering projects. Real implementations, real results, real impact on revenue operations.",
+    "Verluna project write-ups now live under case studies. Real systems, measured results, named tradeoffs.",
+  alternates: {
+    canonical: "https://verluna.de/case-studies",
+  },
 };
 
 export default function WorkPage() {
   return (
-    <>
-      <PageHeader
-        label="The Repository"
-        title="Build Logs"
-        description="Real projects. Real results. Browse our commit history of successful GTM engineering implementations. Each entry represents a system we've built, optimized, or automated."
-      />
-      <WorkContent />
-    </>
+    <div className="pt-32 pb-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tighter text-text">
+          Our work moved.
+        </h1>
+        <p className="mt-6 max-w-2xl text-lg text-text-muted leading-relaxed">
+          Project write-ups now live under case studies: the operation before,
+          the system built, and the measured results after.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Button href="/case-studies" size="lg">
+            View case studies
+          </Button>
+          <Button href="/contact" variant="secondary" size="lg">
+            Book an intro call
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

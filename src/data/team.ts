@@ -36,10 +36,10 @@ export const teamMembers: TeamMember[] = [
   {
     id: "tolga-oral",
     name: "Tolga Oral",
-    role: "Founder & Principal Engineer",
-    bio: "8 years building revenue systems across e-commerce, fintech, gaming, travel, healthcare, and B2B SaaS. Managed EUR 1M+ per month in ad spend. Grew teams from 12 to 45 people. Led 120K app installs and EUR 500K in funding for a fintech startup. Now building at the intersection of marketing automation and applied AI at DeepL, while running Verluna as a dedicated GTM engineering practice.",
+    role: "Founder",
+    bio: "8 years building revenue and automation systems across e-commerce, fintech, gaming, travel, healthcare, and B2B SaaS. Managed EUR 1M+ per month in ad spend. Grew a team from 12 to 45 people. Led 120K app installs and EUR 500K in funding for a fintech startup. Applied AI Lead at DeepL, building agent systems for go-to-market teams, while running Verluna as an agent-operations practice.",
     expertise: [
-      "GTM Strategy",
+      "Agent Operations",
       "AI Automation",
       "Performance Marketing",
       "CRM Architecture",
@@ -47,7 +47,8 @@ export const teamMembers: TeamMember[] = [
       "n8n / HubSpot",
     ],
     background: [
-      { company: "DeepL", role: "Digital Lifecycle Manager", years: "2025" },
+      { company: "DeepL", role: "Applied AI Lead", years: "2026" },
+      { company: "DeepL", role: "Digital Lifecycle Manager", years: "2025-2026" },
       { company: "Verluna", role: "Founder & Consultant", years: "2024" },
       { company: "Tradelite Solutions", role: "Marketing Lead", years: "2023-2024" },
       { company: "Concentrix", role: "Team Lead, AdTech & Sales Operations", years: "2020-2023" },

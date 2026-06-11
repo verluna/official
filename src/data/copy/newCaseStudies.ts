@@ -1,4 +1,4 @@
-// Case studies — Agent Operations era
+// Case studies: agent operations era
 // Anonymized real projects. Practitioner voice, specific numbers, tradeoffs acknowledged.
 
 export interface CaseStudyMetric {
@@ -79,7 +79,7 @@ export const newCaseStudies: NewCaseStudy[] = [
       },
     ],
     duration: "2 weeks",
-    cta: "Get Similar Results",
+    cta: "Have a matching problem like this?",
     category: "automation",
   },
   {
@@ -132,7 +132,7 @@ export const newCaseStudies: NewCaseStudy[] = [
       },
     ],
     duration: "3 weeks",
-    cta: "Discuss Your Use Case",
+    cta: "Localizing content at scale?",
     category: "localization",
   },
   {
@@ -151,9 +151,9 @@ export const newCaseStudies: NewCaseStudy[] = [
       "First lead scoring model live in HubSpot. MQL workflow automated with score-based routing. PQL experiment designed with product data integration (pending data engineering access). W-shaped attribution model quantifying previously invisible marketing touches across the full buyer journey. The research methodology itself became a reusable pattern: structured multi-agent analysis as a prerequisite to implementation, producing better architecture decisions than traditional consulting approaches.",
     techStack: [
       "HubSpot",
-      "Multi-agent research (Claude AI)",
+      "Claude AI multi-agent research",
       "W-shaped attribution",
-      "Custom scoring algorithms",
+      "custom scoring algorithms",
     ],
     metrics: [
       { label: "Research Sessions", value: "7 sessions" },
@@ -184,7 +184,7 @@ export const newCaseStudies: NewCaseStudy[] = [
       },
     ],
     duration: "8 weeks (research + implementation)",
-    cta: "Transform Your Marketing Intelligence",
+    cta: "Is attribution undercounting your marketing?",
     category: "intelligence",
   },
 ];

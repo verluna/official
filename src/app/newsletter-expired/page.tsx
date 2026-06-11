@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
   title: "Link Expired - Verluna",
@@ -7,31 +7,20 @@ export const metadata: Metadata = {
 
 export default function NewsletterExpiredPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-24">
-      <div className="text-center max-w-md">
-        <div className="font-mono text-xs text-steel-grey mb-6">
-          <span className="text-error-red">!</span> newsletter --status expired
-        </div>
-
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-warning-amber/10 border border-warning-amber/20 mb-6">
-          <span className="text-warning-amber text-3xl">&#9888;</span>
-        </div>
-
-        <h1 className="text-2xl font-bold text-off-white mb-3">
-          Link expired
+    <div className="flex min-h-screen items-center justify-center px-4 py-24">
+      <div className="w-full max-w-md">
+        <h1 className="text-3xl font-semibold tracking-tighter text-text">
+          This link has expired.
         </h1>
-        <p className="text-steel-grey leading-relaxed mb-8">
-          This confirmation link has expired or is invalid. Newsletter
-          confirmation links are valid for 72 hours. Please subscribe again to
-          receive a new confirmation email.
+        <p className="mt-4 leading-relaxed text-text-muted">
+          This confirmation link is no longer valid. Links expire after 72
+          hours. Subscribe again and we will send you a fresh one.
         </p>
-
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center px-6 py-3 bg-surface border border-surface-border rounded-lg text-off-white font-medium text-sm hover:border-terminal-green/50 hover:text-terminal-green transition-all"
-        >
-          Back to Verluna
-        </Link>
+        <div className="mt-8">
+          <Button variant="primary" size="md" href="/">
+            Back to home
+          </Button>
+        </div>
       </div>
     </div>
   );

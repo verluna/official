@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -13,11 +13,11 @@ const navLinks = [
   { href: "/about", label: "About" },
 ];
 
-function VerlunaLogo() {
+function VerlunaLogo({ className = "h-6 w-auto" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 841.89 595.28"
-      className="h-6 w-auto"
+      className={className}
       aria-label="Verluna"
       role="img"
       fill="currentColor"
@@ -37,19 +37,10 @@ function VerlunaLogo() {
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const menuRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-
-  // Detect scroll for background opacity change
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const reduceMotion = useReducedMotion();
 
   // Close menu on Escape key
   useEffect(() => {
@@ -114,20 +105,14 @@ export function Header() {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "border-b border-surface-border/50 bg-void/90 backdrop-blur-xl"
-          : "bg-void/60 backdrop-blur-md"
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-line bg-ink/85 backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-8">
           {/* Logo */}
           <Link
             href="/"
-            className="flex-shrink-0 text-off-white hover:text-terminal-green transition-colors duration-200"
-            aria-label="Verluna — home"
+            className="flex-shrink-0 text-text transition-colors duration-200 hover:text-white"
+            aria-label="Verluna home"
           >
             <VerlunaLogo />
           </Link>
@@ -140,8 +125,8 @@ export function Header() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                   isActive(link.href)
-                    ? "text-terminal-green"
-                    : "text-steel-grey hover:text-off-white"
+                    ? "text-text"
+                    : "text-text-muted hover:text-text"
                 }`}
               >
                 {link.label}
@@ -153,17 +138,15 @@ export function Header() {
           <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             <Link
               href="/scorecard"
-              className="text-sm font-medium text-steel-grey hover:text-off-white border border-surface-border hover:border-steel-grey/50 px-4 py-2 rounded transition-all duration-200 whitespace-nowrap"
+              className="text-sm font-medium text-text-muted hover:text-text border border-line-strong hover:border-text/40 px-4 py-2 rounded-md transition-colors duration-200 whitespace-nowrap"
             >
-              Take the Assessment
+              Readiness assessment
             </Link>
             <Link
-              href="https://calendly.com/verluna-intro-call"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-semibold bg-terminal-green text-void px-4 py-2 rounded hover:bg-terminal-green/90 transition-colors duration-200 whitespace-nowrap"
+              href="/contact"
+              className="text-sm font-medium bg-text text-ink px-4 py-2 rounded-md hover:bg-white transition-colors duration-200 whitespace-nowrap"
             >
-              Book a Call
+              Book an intro call
             </Link>
           </div>
 
@@ -171,7 +154,7 @@ export function Header() {
           <button
             ref={menuButtonRef}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 text-steel-grey hover:text-off-white transition-colors"
+            className="lg:hidden p-2 text-text-muted hover:text-text transition-colors"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMenuOpen ? "true" : "false"}
             aria-controls="mobile-menu"
@@ -206,11 +189,11 @@ export function Header() {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={reduceMotion ? false : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:hidden fixed inset-0 top-16 z-40 bg-void/98 backdrop-blur-xl border-t border-surface-border"
+            className="lg:hidden fixed inset-0 top-16 z-40 bg-ink/98 backdrop-blur-xl border-t border-line"
           >
             <nav
               ref={menuRef}
@@ -221,17 +204,17 @@ export function Header() {
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, x: -16 }}
+                  initial={reduceMotion ? false : { opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05, duration: 0.2 }}
                 >
                   <Link
                     href={link.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`block py-3 text-lg font-medium border-b border-surface-border/50 transition-colors duration-200 ${
+                    className={`block py-3 text-lg font-medium border-b border-line transition-colors duration-200 ${
                       isActive(link.href)
-                        ? "text-terminal-green"
-                        : "text-off-white hover:text-terminal-green"
+                        ? "text-text"
+                        : "text-text-muted hover:text-text"
                     }`}
                   >
                     {link.label}
@@ -241,7 +224,7 @@ export function Header() {
 
               {/* Mobile CTAs */}
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
+                initial={reduceMotion ? false : { opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.2 }}
                 className="mt-8 flex flex-col gap-3"
@@ -249,25 +232,21 @@ export function Header() {
                 <Link
                   href="/scorecard"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full text-center text-sm font-medium text-off-white border border-surface-border hover:border-steel-grey/50 px-4 py-3 rounded transition-all duration-200"
+                  className="w-full text-center text-sm font-medium text-text border border-line-strong hover:border-text/40 px-4 py-3 rounded-md transition-colors duration-200"
                 >
-                  Take the Assessment
+                  Readiness assessment
                 </Link>
                 <Link
-                  href="https://calendly.com/verluna-intro-call"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full text-center text-sm font-semibold bg-terminal-green text-void px-4 py-3 rounded hover:bg-terminal-green/90 transition-colors duration-200"
+                  className="w-full text-center text-sm font-medium bg-text text-ink px-4 py-3 rounded-md hover:bg-white transition-colors duration-200"
                 >
-                  Book a Call
+                  Book an intro call
                 </Link>
               </motion.div>
 
-              {/* Location / status indicator */}
-              <div className="mt-auto pt-6 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-terminal-green animate-pulse-slow" />
-                <span className="font-mono text-xs text-steel-grey">Berlin, DE — Operational</span>
+              <div className="mt-auto pt-6 text-sm text-text-faint">
+                Berlin, Germany
               </div>
             </nav>
           </motion.div>

@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Providers } from "@/components/providers";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Verluna — Agent Operations for European Enterprises",
+  title: "Verluna: Agent Operations for European Enterprises",
   description:
     "Verluna designs, builds, and runs the operating layer between AI agents and European enterprises. Working systems, not strategy decks. Based in Berlin.",
   keywords: [
@@ -35,28 +35,19 @@ export const metadata: Metadata = {
   authors: [{ name: "Verluna" }],
   metadataBase: new URL("https://verluna.de"),
   openGraph: {
-    title: "Verluna — Agent Operations for European Enterprises",
+    title: "Verluna: Agent Operations for European Enterprises",
     description:
       "We design, build, and run the operating layer between AI agents and your business. Working systems, not strategy decks.",
     url: "https://verluna.de",
     siteName: "Verluna",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Verluna — Agent Operations for European Enterprises",
-      },
-    ],
     type: "website",
     locale: "en_EU",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Verluna — Agent Operations for European Enterprises",
+    title: "Verluna: Agent Operations for European Enterprises",
     description:
       "We design, build, and run the operating layer between AI agents and your business. Working systems, not strategy decks.",
-    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -96,8 +87,8 @@ const organizationSchemaJson = JSON.stringify({
     { "@type": "Continent", name: "Europe" },
   ],
   serviceType: [
-    "GTM Audit",
-    "GTM Build",
+    "Agent Readiness Audit",
+    "Agent System Build",
     "Managed Agent Operations",
     "Agent Architecture Consulting",
   ],
@@ -128,32 +119,19 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased bg-charcoal text-off-white min-h-screen`}
+        className={`${geist.variable} ${geistMono.variable} antialiased bg-ink text-text min-h-screen`}
       >
         <Providers>
-          <div className="relative bg-circuit-grid">
-            {/* Ambient gradient orbs */}
-            <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-electric-purple/5 rounded-full blur-[120px] pointer-events-none z-[1]" />
-            <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-terminal-green/5 rounded-full blur-[100px] pointer-events-none z-[1]" />
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-signal-blue/3 rounded-full blur-[150px] pointer-events-none z-[1]" />
-
-            {/* Noise texture overlay */}
-            <div className="noise-overlay" />
-
-            {/* Content */}
-            <div className="relative z-10">
-              {/* Skip to content */}
-              <a
-                href="#main"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-terminal-green focus:text-void focus:rounded focus:font-medium focus:outline-none"
-              >
-                Skip to content
-              </a>
-              <Header />
-              <main id="main">{children}</main>
-              <Footer />
-            </div>
-          </div>
+          {/* Skip to content */}
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-text focus:text-ink focus:rounded-md focus:font-medium focus:outline-none"
+          >
+            Skip to content
+          </a>
+          <Header />
+          <main id="main">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>

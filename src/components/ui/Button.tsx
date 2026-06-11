@@ -1,9 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Link from "next/link";
 import { ReactNode } from "react";
-
-type CursorColor = "green" | "purple" | "blue";
 
 interface ButtonProps {
   children: ReactNode;
@@ -12,22 +10,23 @@ interface ButtonProps {
   className?: string;
   onClick?: () => void;
   href?: string;
-  cursorColor?: CursorColor;
+  /** Kept for backwards compatibility with older call sites. Unused. */
+  cursorColor?: string;
 }
 
 const variants = {
   primary:
-    "bg-off-white text-void hover:bg-terminal-green hover:text-void border-transparent",
+    "bg-text text-ink border-transparent hover:bg-white",
   secondary:
-    "bg-transparent text-off-white border-surface-border hover:border-terminal-green hover:text-terminal-green",
+    "bg-transparent text-text border-line-strong hover:border-text/40 hover:bg-ink-raised",
   ghost:
-    "bg-transparent text-steel-grey hover:text-off-white border-transparent",
+    "bg-transparent text-text-muted border-transparent hover:text-text",
 };
 
 const sizes = {
   sm: "px-4 py-2 text-sm",
-  md: "px-6 py-3 text-base",
-  lg: "px-8 py-4 text-lg",
+  md: "px-5 py-2.5 text-sm",
+  lg: "px-6 py-3 text-base",
 };
 
 export function Button({
@@ -37,31 +36,43 @@ export function Button({
   className = "",
   onClick,
   href,
-  cursorColor = "green",
 }: ButtonProps) {
-  const baseClasses = `
-    inline-flex items-center justify-center gap-2
-    font-medium tracking-tight
-    border transition-all duration-200
-    focus:outline-none focus:ring-2 focus:ring-terminal-green/50
-    ${variants[variant]}
-    ${sizes[size]}
-    ${className}
-  `;
+  const classes = [
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap",
+    "font-medium tracking-tight rounded-md border",
+    "transition-[background-color,border-color,color,transform] duration-200",
+    "active:translate-y-px active:scale-[0.99]",
+    "focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2",
+    variants[variant],
+    sizes[size],
+    className,
+  ].join(" ");
 
-  const MotionComponent = href ? motion.a : motion.button;
+  if (href) {
+    const external = href.startsWith("http");
+    if (external) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={classes}
+          onClick={onClick}
+        >
+          {children}
+        </a>
+      );
+    }
+    return (
+      <Link href={href} className={classes} onClick={onClick}>
+        {children}
+      </Link>
+    );
+  }
 
   return (
-    <MotionComponent
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className={baseClasses}
-      onClick={onClick}
-      data-cursor="hover"
-      data-cursor-color={cursorColor}
-      {...(href ? { href } : {})}
-    >
+    <button className={classes} onClick={onClick}>
       {children}
-    </MotionComponent>
+    </button>
   );
 }

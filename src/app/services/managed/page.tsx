@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { ManagedContent } from "./ManagedContent";
 
 export const metadata: Metadata = {
-  title: "Managed Agent Operations | Verluna — Your Operations Team Without the Hiring Timeline",
+  title: "Managed Agent Operations | Verluna, We Run Your Agents",
   description:
-    "Ongoing agent operations partnership. Two-week experiment sprints, monthly performance reviews, agent fleet management, and priority SLA. From EUR 5,000/month.",
+    "Our lead engagement. Continuous monitoring, governance reporting, proactive maintenance, and a new capability every month. EUR 8-15K/month, six-month minimum.",
   keywords: [
     "managed marketing operations",
     "outsourced agent operations",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Managed Agent Operations | Verluna",
     description:
-      "One architect with an AI agent workforce delivers the throughput of a 3-5 person team. From EUR 5,000/month.",
+      "We run your agent fleet as an ongoing practice: monitoring, governance, iteration, and new capabilities every month. EUR 8-15K/month, six-month minimum.",
     url: "https://verluna.de/services/managed",
   },
 };

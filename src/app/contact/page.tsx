@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { ContactContent } from "./ContactContent";
+import { ContactView } from "@/components/convert/ContactView";
 
 export const metadata: Metadata = {
   title: "Contact | Verluna - Start a Conversation",
@@ -17,5 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-  return <ContactContent />;
+  return <ContactView />;
 }

@@ -1,6 +1,5 @@
-// Resources page copy — StoryBrand SB7 aligned
-// Three lead magnets, each mapped to a service track color.
-// Transitional CTAs: value-first, low commitment.
+// Resources page copy.
+// Three lead magnets, each mapped to an engagement. Delivered by email.
 
 export interface LeadMagnet {
   id: string;
@@ -27,22 +26,22 @@ export interface ResourcesCopy {
 }
 
 export const resourcesCopy: ResourcesCopy = {
-  pageHeading: "Free Tools to Diagnose Your GTM Stack",
+  pageHeading: "Free tools to diagnose your stack",
   pageSubheading:
-    "Every resource below gives you something actionable today. No email gates on the checklist. No fluff in the library. No trick questions in the assessment.",
+    "Every resource below gives you something actionable today. No fluff, no trick questions. Enter your email and we send it over.",
 
   leadMagnets: [
     {
       id: "gtm-checklist",
       title: "GTM Audit Checklist",
       description:
-        "A 47-point self-diagnostic for your go-to-market infrastructure. Score your data flows, integrations, lead routing, attribution, and CRM health. Takes 20 minutes. Tells you exactly where your stack is leaking.",
+        "A 47-point self-diagnostic for your go-to-market infrastructure. Score your data flows, integrations, lead routing, attribution, and CRM health. Takes 20 minutes and tells you exactly where your stack is leaking.",
       valueProposition:
-        "The same framework we use in $10K audit engagements, distilled into a checklist you can run yourself this afternoon.",
+        "The same framework we use in paid readiness audits, condensed into a checklist you can run yourself this afternoon.",
       color: "blue",
-      ctaLabel: "Download the Checklist",
+      ctaLabel: "Get the checklist",
       type: "pdf",
-      trackAlignment: "Track A: GTM Audit",
+      trackAlignment: "Readiness Audit",
       contents: [
         "Data flow health check (12 points)",
         "Integration quality scoring (8 points)",
@@ -58,11 +57,11 @@ export const resourcesCopy: ResourcesCopy = {
       description:
         "14 production-tested automation patterns we deploy for clients. Each pattern includes the trigger, the logic, the tools involved, and the metrics you should track. From lead routing to lifecycle workflows to data sync pipelines.",
       valueProposition:
-        "Stop reinventing workflows from scratch. These patterns are battle-tested across 50+ deployments and 6 industries.",
+        "Stop reinventing workflows from scratch. Each pattern is written the way we deploy it: trigger, logic, tooling, and what to measure.",
       color: "green",
-      ctaLabel: "Browse the Patterns",
+      ctaLabel: "Get the patterns",
       type: "preview",
-      trackAlignment: "Track B: Autonomous Ops",
+      trackAlignment: "System Build",
       contents: [
         "Lead scoring and routing (3 patterns)",
         "CRM data hygiene automation (2 patterns)",
@@ -76,13 +75,13 @@ export const resourcesCopy: ResourcesCopy = {
       id: "stack-readiness",
       title: "Stack Readiness Assessment",
       description:
-        "5 questions that tell you whether your GTM stack is ready for AI agents. Not whether AI is cool. Whether your data, processes, and team are set up to actually benefit from automated intelligence. Takes 3 minutes.",
+        "Five questions that tell you whether your GTM stack is ready for AI agents. Not whether AI is interesting, but whether your data, processes, and team are set up to benefit from it. Takes 3 minutes.",
       valueProposition:
         "Most companies jump to AI agents before their data is ready. This assessment tells you if you are one of them, and what to fix first.",
       color: "purple",
-      ctaLabel: "Take the Assessment",
+      ctaLabel: "Get the assessment",
       type: "assessment",
-      trackAlignment: "Track C: Custom AI Agents",
+      trackAlignment: "Managed Agent Operations",
       contents: [
         "Data readiness evaluation (structured vs. unstructured)",
         "Process documentation maturity check",
@@ -94,10 +93,10 @@ export const resourcesCopy: ResourcesCopy = {
   ],
 
   bottomCta: {
-    heading: "Want the Full Picture?",
+    heading: "Want the full picture?",
     description:
-      "The resources above give you a starting point. If you want a complete diagnostic of your GTM infrastructure with dollar values attached to every fix, book a GTM Audit.",
-    ctaLabel: "Book Your Free Audit Call",
+      "The resources above give you a starting point. If you want a complete diagnostic of your GTM infrastructure with a prioritized fix list, start with a conversation.",
+    ctaLabel: "Book an intro call",
     ctaHref: "/contact",
   },
 };

@@ -1,12 +1,8 @@
 import { Metadata } from "next";
-import { PageHeader } from "@/components/ui";
 import { InsightsContent } from "./InsightsContent";
-import {
-  getAllPosts,
-  getCategoriesWithCount,
-  getTagsWithCount,
-} from "@/lib/blog/posts";
 import { InsightsHero } from "./InsightsHero";
+import { NewsletterSignup } from "@/components/insights";
+import { getAllPosts, getCategoriesWithCount } from "@/lib/blog/posts";
 
 export const metadata: Metadata = {
   title: "Insights | Verluna - Agent Operations Knowledge",
@@ -26,16 +22,12 @@ export const metadata: Metadata = {
 export default function InsightsPage() {
   const posts = getAllPosts();
   const categories = getCategoriesWithCount();
-  const tags = getTagsWithCount();
 
   return (
     <>
       <InsightsHero />
-      <InsightsContent
-        initialPosts={posts}
-        categories={categories}
-        tags={tags}
-      />
+      <InsightsContent posts={posts} categories={categories} />
+      <NewsletterSignup />
     </>
   );
 }

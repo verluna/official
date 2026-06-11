@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { CaseStudiesContent } from "./CaseStudiesContent";
+import { CaseStudyList } from "@/components/case-studies/CaseStudyList";
 
 export const metadata: Metadata = {
   title: "Case Studies | Verluna - Agent Operations Results",
@@ -17,5 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function CaseStudiesPage() {
-  return <CaseStudiesContent />;
+  return <CaseStudyList />;
 }

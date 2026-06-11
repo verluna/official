@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { newCaseStudies } from "@/data/copy/newCaseStudies";
-import { CaseStudyDetailContent } from "./CaseStudyDetailContent";
+import { CaseStudyDetail } from "@/components/case-studies/CaseStudyDetail";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -45,5 +45,5 @@ export default async function CaseStudyPage({ params }: Props) {
   const nextStudy =
     studyIndex < newCaseStudies.length - 1 ? newCaseStudies[studyIndex + 1] : null;
 
-  return <CaseStudyDetailContent study={study} nextStudy={nextStudy} />;
+  return <CaseStudyDetail study={study} nextStudy={nextStudy} />;
 }

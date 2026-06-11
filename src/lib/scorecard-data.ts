@@ -234,7 +234,7 @@ export const TIERS: Record<ScorecardTier, TierInfo> = {
       "Build the business case for a dedicated automation budget. Use your pilot results to quantify ROI and present to leadership.",
     ],
     cta: {
-      label: "Book a Free Strategy Call",
+      label: "Book an intro call",
       href: "https://calendly.com/verluna-intro-call",
     },
   },
@@ -251,7 +251,7 @@ export const TIERS: Record<ScorecardTier, TierInfo> = {
       "Plan for scale: establish agent monitoring, cost tracking, and performance metrics from day one. The companies that succeed with agents treat them like team members with KPIs.",
     ],
     cta: {
-      label: "Book a Free Strategy Call",
+      label: "Book an intro call",
       href: "https://calendly.com/verluna-intro-call",
     },
   },

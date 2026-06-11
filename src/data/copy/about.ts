@@ -1,113 +1,103 @@
-// About page copy — StoryBrand SB7 aligned
-// Positive identity framing: who Verluna IS, not who it is not.
-// Customer transformation leads. Founder bio as credibility proof.
+// About page copy, v2 design language (2026-06).
+// Founder-led story. All numbers come from src/data/team.ts or the redesign brief.
 
-export interface MissionCopy {
-  heading: string;
-  paragraphs: string[];
+export interface ProofStat {
+  value: string;
+  label: string;
 }
 
-export interface FounderCopy {
-  name: string;
-  role: string;
-  credibilityBio: string;
-  transformationStatement: string;
-  careerHighlights: { metric: string; context: string }[];
-}
-
-export interface ValueItem {
+export interface PrincipleItem {
   title: string;
-  description: string;
-  principle: string;
+  body: string;
 }
 
 export interface AboutCopy {
-  mission: MissionCopy;
-  founder: FounderCopy;
-  soloPositioning: {
+  hero: {
     heading: string;
-    statement: string;
-    benefits: string[];
+    lede: string;
   };
-  values: ValueItem[];
+  founder: {
+    heading: string;
+    paragraphs: string[];
+    backgroundHeading: string;
+  };
+  why: {
+    heading: string;
+    paragraphs: string[];
+  };
+  proof: {
+    heading: string;
+    lede: string;
+    stats: ProofStat[];
+  };
+  principles: {
+    heading: string;
+    items: PrincipleItem[];
+  };
+  cta: {
+    heading: string;
+    body: string;
+  };
 }
 
 export const aboutCopy: AboutCopy = {
-  mission: {
-    heading: "Revenue Teams Deserve Infrastructure, Not Band-Aids",
-    paragraphs: [
-      "Verluna is a GTM engineering firm. We build the code, workflows, and AI systems that turn manual go-to-market operations into autonomous revenue infrastructure.",
-      "Most companies outgrow their tools before they outgrow their market. The CRM was configured three years ago by someone who left. Lead routing lives in a spreadsheet. Attribution is a best guess. The ops team spends half their week on work that should take zero human hours.",
-      "We exist for the teams that are tired of patching and ready to build properly. Every engagement starts with your data, your workflows, and your stack. We map what is broken, quantify what it costs, and build the systems that fix it permanently.",
-      "The result is not a report. It is running code. Automated pipelines. AI agents that work while your team sleeps. Revenue operations that scale without adding headcount.",
-    ],
-  },
-
-  soloPositioning: {
-    heading: "One Engineer. Zero Handoffs.",
-    statement:
-      "You work directly with the person who architects, builds, and deploys your systems. No project managers relaying requirements. No junior developers learning on your budget. Every conversation moves the build forward.",
-    benefits: [
-      "Direct access to 8 years of GTM engineering experience",
-      "Same person on the discovery call builds your system",
-      "Faster iteration — no approval chains or knowledge gaps",
-      "Full accountability — one engineer, one outcome",
-    ],
+  hero: {
+    heading: "Built by an operator who runs agents every day.",
+    lede: "Verluna is an agent-operations consultancy in Berlin, founded and run by Tolga Oral. The methods we sell are the ones our own company runs on.",
   },
 
   founder: {
-    name: "Tolga Oral",
-    role: "Founder & Principal Engineer",
-    credibilityBio:
-      "8 years building revenue systems across e-commerce, fintech, gaming, travel, healthcare, and B2B SaaS. Managed EUR 1M+ per month in ad spend. Grew teams from 12 to 45 people. Led 120K app installs and EUR 500K in funding for a fintech startup. Now building at the intersection of marketing automation and applied AI at DeepL, while running Verluna as a dedicated GTM engineering practice.",
-    transformationStatement:
-      "I built Verluna because I kept seeing the same pattern: smart teams drowning in manual work because nobody treated their GTM stack like real infrastructure. Every company I worked with had the same leaky pipes. I decided to become the engineer who fixes them.",
-    careerHighlights: [
-      { metric: "EUR 1M+/mo", context: "Ad spend managed across Meta, Google, and programmatic" },
-      { metric: "12 to 45", context: "Team grown at Concentrix/Meta performance division" },
-      { metric: "120K installs", context: "Fintech app launch in 6 months at Tradelite" },
-      { metric: "50+ systems", context: "Automation builds across 6 industries" },
-      { metric: "2,000+ hours", context: "Manual work eliminated for clients" },
-      { metric: "6 industries", context: "SaaS, fintech, e-commerce, travel, healthcare, professional services" },
+    heading: "Tolga Oral, Berlin.",
+    paragraphs: [
+      "Tolga spent eight years building revenue and automation systems across e-commerce, fintech, gaming, travel, healthcare, and B2B SaaS. He managed more than EUR 1M per month in ad spend, grew a team from 12 to 45 people, and led a fintech app launch to 120K installs.",
+      "Today he is Applied AI Lead at DeepL, where he builds agent systems and automation for go-to-market teams. The same discipline runs Verluna: 60+ agents in production across our own operation, executing 80+ codified skills against 12 integrated systems. When he recommends an architecture, it is because he operates one.",
+    ],
+    backgroundHeading: "Background",
+  },
+
+  why: {
+    heading: "Why Verluna exists.",
+    paragraphs: [
+      "Most AI consulting ends in a slide deck. The recommendations are reasonable, the diagrams are tidy, and six months later nothing runs in production.",
+      "Verluna ends engagements with agents deployed, monitored, and documented, operated by your team. The deliverable is a running system.",
+      "And every method is tested on our own operation first. Our research, delivery, and content run on an agent fleet we built ourselves. If a pattern does not survive daily production use in our own company, we do not sell it to yours.",
     ],
   },
 
-  values: [
-    {
-      title: "Code Over Config",
-      description:
-        "Point-and-click tools hit a ceiling. We write real code, version it, test it, and deploy it. That is how you get systems that last.",
-      principle: "If it cannot be committed to a repo, it is not infrastructure.",
-    },
-    {
-      title: "Show the Architecture",
-      description:
-        "We never hand you a black box. Every build comes with data flow diagrams, documentation, and training so your team understands exactly what runs and why.",
-      principle: "Transparency is a deliverable, not a courtesy.",
-    },
-    {
-      title: "Measure Everything",
-      description:
-        "No vanity metrics. Every system we deploy ships with monitoring, alerting, and dashboards that show real impact: hours saved, leads routed, revenue attributed.",
-      principle: "If you cannot measure it, you cannot improve it.",
-    },
-    {
-      title: "Build for Handoff",
-      description:
-        "We design every system so your team can operate it without us. Documentation, runbooks, and training sessions are standard on every engagement.",
-      principle: "The best consultant makes themselves unnecessary.",
-    },
-    {
-      title: "Ship, Then Iterate",
-      description:
-        "We deploy in weeks, not quarters. Get a working system first, then optimize with real data. Perfect is the enemy of automated.",
-      principle: "A working pipeline today beats a perfect one next quarter.",
-    },
-    {
-      title: "Acknowledge the Tradeoffs",
-      description:
-        "Every architecture decision has costs. We tell you what you gain and what you give up. No silver bullets, no false promises.",
-      principle: "Honest engineering beats optimistic consulting.",
-    },
-  ],
+  proof: {
+    heading: "The proof runs daily.",
+    lede: "These numbers are not projections. They describe the operation behind this website.",
+    stats: [
+      { value: "60+", label: "Agents in production across our own operation" },
+      { value: "80+", label: "Codified skills agents execute autonomously" },
+      { value: "12", label: "Systems integrated, from CRM to data warehouse" },
+    ],
+  },
+
+  principles: {
+    heading: "How we decide to work.",
+    items: [
+      {
+        title: "Running systems over recommendations",
+        body: "An engagement ends when the system runs in production, not when the report is delivered.",
+      },
+      {
+        title: "Show the architecture",
+        body: "No black boxes. Every build ships with diagrams, documentation, and training, so your team knows exactly what runs and why.",
+      },
+      {
+        title: "Build for handoff",
+        body: "Systems are designed so your team can operate them without us. Runbooks and training sessions are standard, not extras.",
+      },
+      {
+        title: "Name the tradeoffs",
+        body: "Every architecture decision costs something. We tell you what you gain and what you give up, before you commit.",
+      },
+    ],
+  },
+
+  cta: {
+    heading: "Talk to the person who builds it.",
+    body: "Thirty minutes with Tolga, no pitch. Bring your stack and your bottlenecks.",
+  },
 };

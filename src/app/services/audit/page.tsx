@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { AuditContent } from "./AuditContent";
 
 export const metadata: Metadata = {
-  title: "Agent Readiness Audit | Verluna — Two Weeks to See Your Operations Clearly",
+  title: "Readiness Audit | Verluna, Know What Is Ready for Autonomy",
   description:
-    "A two-week diagnostic that maps your GTM stack, scores automation maturity, and delivers an architecture diagram with the three highest-ROI agent opportunities. EUR 5,000-10,000.",
+    "A two-to-three-week diagnostic. We map your systems and workflows, score readiness for agents, and deliver a prioritized roadmap with effort and risk per item. EUR 7-10K, fixed price.",
   keywords: [
     "GTM automation audit",
     "agent readiness assessment",
@@ -13,9 +13,9 @@ export const metadata: Metadata = {
     "agent operations diagnostic",
   ],
   openGraph: {
-    title: "Agent Readiness Audit | Verluna",
+    title: "Readiness Audit | Verluna",
     description:
-      "Two-week diagnostic. Architecture diagram. Automation maturity scorecard. 3 prioritized opportunities with ROI. EUR 5,000-10,000.",
+      "Two to three weeks. Architecture map, readiness scorecard, three priority recommendations, 90-day roadmap. EUR 7-10K, fixed price.",
     url: "https://verluna.de/services/audit",
   },
 };
